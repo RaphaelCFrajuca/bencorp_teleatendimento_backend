@@ -149,9 +149,9 @@ export class RoomsService {
 
   async generatePatientToken(opaqueToken: string): Promise<RoomTokenResponseDto> {
     const tokenHash = createHash('sha256').update(opaqueToken).digest('hex');
-    const consumedLink = await this.roomRepository.consumePatientLinkByHash(tokenHash);
+    const activeLink = await this.roomRepository.getActivePatientLinkByHash(tokenHash);
 
-    if (!consumedLink) {
+    if (!activeLink) {
       this.logger.warn('Falha na emissão de token do paciente por token opaco inválido', {
         result: 'forbidden',
       });
@@ -159,11 +159,11 @@ export class RoomsService {
     }
 
     const consultation = await this.roomRepository.getConsultationForRoom(
-      consumedLink.consultationId,
+      activeLink.consultationId,
     );
     if (!consultation || consultation.status !== ConsultationStatus.EM_ANDAMENTO) {
       this.logger.warn('Falha na emissão de token do paciente por atendimento indisponível', {
-        consultationId: consumedLink.consultationId,
+        consultationId: activeLink.consultationId,
         result: 'forbidden',
       });
       throw new ForbiddenException('Acesso à sala não permitido.');
@@ -178,6 +178,15 @@ export class RoomsService {
       roomVersion: consultation.roomVersion,
       ttlSeconds: this.patientTokenTtlSeconds,
     });
+
+    const consumedLink = await this.roomRepository.consumePatientLinkByHash(tokenHash);
+    if (!consumedLink) {
+      this.logger.warn('Falha na emissão de token do paciente por consumo concorrente do link', {
+        consultationId: consultation.id,
+        result: 'forbidden',
+      });
+      throw new ForbiddenException('Acesso à sala não permitido.');
+    }
 
     this.logger.log('Token de paciente emitido para sala', {
       consultationId: consultation.id,

@@ -50,12 +50,13 @@ export class RoomRepository implements RoomRepositoryInterface {
 
   async getActivePatientLinkByHash(tokenHash: string): Promise<PatientLink | null> {
     const dataSource = await this.getDataSource();
+    const now = new Date();
     const link = await dataSource
       .getRepository(PatientLinkEntity)
       .createQueryBuilder('pl')
       .where('pl.token_hash = :tokenHash', { tokenHash })
       .andWhere('pl.used_at IS NULL')
-      .andWhere('pl.expires_at > CURRENT_TIMESTAMP')
+      .andWhere('pl.expires_at > :now', { now })
       .getOne();
 
     return link;
@@ -63,6 +64,7 @@ export class RoomRepository implements RoomRepositoryInterface {
 
   async consumePatientLinkByHash(tokenHash: string): Promise<PatientLink | null> {
     const dataSource = await this.getDataSource();
+    const now = new Date();
     const result = await dataSource
       .getRepository(PatientLinkEntity)
       .createQueryBuilder()
@@ -70,7 +72,7 @@ export class RoomRepository implements RoomRepositoryInterface {
       .set({ usedAt: () => 'CURRENT_TIMESTAMP' })
       .where('token_hash = :tokenHash', { tokenHash })
       .andWhere('used_at IS NULL')
-      .andWhere('expires_at > CURRENT_TIMESTAMP')
+      .andWhere('expires_at > :now', { now })
       .returning('*')
       .execute();
 
