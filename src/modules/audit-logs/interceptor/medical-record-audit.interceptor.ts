@@ -2,8 +2,14 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { Logger } from 'nestjs-pino';
 import { Observable, tap } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AuditLogsService } from '../service/audit-logs.service';
 import { AuditAction } from '../enum/audit-action.enum';
+import { AuditLogsService } from '../service/audit-logs.service';
+
+type AuthenticatedUser = {
+  id?: string;
+  sub?: string;
+  role?: string;
+};
 
 @Injectable()
 export class MedicalRecordAuditInterceptor implements NestInterceptor {
@@ -57,7 +63,7 @@ export class MedicalRecordAuditInterceptor implements NestInterceptor {
     method: string,
     url: string,
     statusCode: number,
-    user: any,
+    user: AuthenticatedUser,
     ipAddress: string,
     userAgent: string,
   ): void {
@@ -80,24 +86,31 @@ export class MedicalRecordAuditInterceptor implements NestInterceptor {
       return;
     }
 
+    if (!user.role) {
+      this.logger.warn({ userId }, 'Usuário sem role no contexto para auditoria');
+      return;
+    }
+
     const patientId = this.extractPatientIdFromUrl(url);
     const medicalRecordId = this.extractMedicalRecordId(url);
 
     if (patientId) {
-      this.auditLogsService.logMedicalRecordAccess(
-        userId,
-        user.role,
-        patientId,
-        action,
-        url,
-        method,
-        statusCode,
-        medicalRecordId,
-        ipAddress,
-        userAgent,
-      ).catch((error) => {
-        this.logger.error({ error }, 'Erro ao registrar auditoria');
-      });
+      this.auditLogsService
+        .logMedicalRecordAccess(
+          userId,
+          user.role,
+          patientId,
+          action,
+          url,
+          method,
+          statusCode,
+          medicalRecordId,
+          ipAddress,
+          userAgent,
+        )
+        .catch((error) => {
+          this.logger.error({ error }, 'Erro ao registrar auditoria');
+        });
     }
   }
 

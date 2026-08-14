@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 import { AuditLogRepositoryInterface } from '../../../interfaces/audit-log.repository.interface';
 import type { Database } from '../../../interfaces/database.interface';
+import { AuditLog } from 'src/modules/audit-logs/entity/audit-log.entity';
+import { AuditAction } from 'src/modules/audit-logs/enum/audit-action.enum';
 import { AuditLogEntity } from '../entities/audit-log.entity';
 
 @Injectable()
@@ -21,13 +23,13 @@ export class AuditLogRepository implements AuditLogRepositoryInterface {
     userRole: string;
     patientId: string;
     medicalRecordId?: string;
-    action: string;
+    action: AuditAction;
     endpoint: string;
     method: string;
     statusCode: number;
     ipAddress?: string;
     userAgent?: string;
-  }): Promise<any> {
+  }): Promise<AuditLog> {
     const repository = await this.getRepository();
     const auditLog = repository.create({
       userId: data.userId,
@@ -54,7 +56,7 @@ export class AuditLogRepository implements AuditLogRepositoryInterface {
     return saved;
   }
 
-  async getAuditLogsByPatient(patientId: string, limit: number = 100): Promise<any[]> {
+  async getAuditLogsByPatient(patientId: string, limit: number = 100): Promise<AuditLog[]> {
     const repository = await this.getRepository();
     const logs = await repository.find({
       where: { patientId },
@@ -69,7 +71,7 @@ export class AuditLogRepository implements AuditLogRepositoryInterface {
     return logs;
   }
 
-  async getAuditLogsByMedicalRecord(medicalRecordId: string, limit: number = 100): Promise<any[]> {
+  async getAuditLogsByMedicalRecord(medicalRecordId: string, limit: number = 100): Promise<AuditLog[]> {
     const repository = await this.getRepository();
     const logs = await repository.find({
       where: { medicalRecordId },
@@ -84,7 +86,7 @@ export class AuditLogRepository implements AuditLogRepositoryInterface {
     return logs;
   }
 
-  async getAuditLogsByUser(userId: string, limit: number = 100): Promise<any[]> {
+  async getAuditLogsByUser(userId: string, limit: number = 100): Promise<AuditLog[]> {
     const repository = await this.getRepository();
     const logs = await repository.find({
       where: { userId },
@@ -99,7 +101,7 @@ export class AuditLogRepository implements AuditLogRepositoryInterface {
     return logs;
   }
 
-  async getAuditLogsInRange(startDate: Date, endDate: Date, limit: number = 100): Promise<any[]> {
+  async getAuditLogsInRange(startDate: Date, endDate: Date, limit: number = 100): Promise<AuditLog[]> {
     const repository = await this.getRepository();
     const logs = await repository
       .createQueryBuilder('al')

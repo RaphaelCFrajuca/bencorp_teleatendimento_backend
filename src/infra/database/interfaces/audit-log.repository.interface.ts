@@ -1,5 +1,5 @@
-import { AuditAction } from 'src/modules/audit-logs/enum/audit-action.enum';
 import { AuditLog } from 'src/modules/audit-logs/entity/audit-log.entity';
+import { AuditAction } from 'src/modules/audit-logs/enum/audit-action.enum';
 
 export interface AuditLogRepositoryInterface {
   createAuditLog(data: {
@@ -7,7 +7,7 @@ export interface AuditLogRepositoryInterface {
     userRole: string;
     patientId: string;
     medicalRecordId?: string;
-    action: AuditAction | string;
+    action: AuditAction;
     endpoint: string;
     method: string;
     statusCode: number;

@@ -1,4 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AuditAction } from 'src/modules/audit-logs/enum/audit-action.enum';
 
 @Entity({ name: 'audit_logs' })
 export class AuditLogEntity {
@@ -18,7 +19,7 @@ export class AuditLogEntity {
   medicalRecordId?: string;
 
   @Column({ name: 'action', type: 'varchar', nullable: false })
-  action: string;
+  action: AuditAction;
 
   @Column({ name: 'endpoint', type: 'varchar', nullable: false })
   endpoint: string;
