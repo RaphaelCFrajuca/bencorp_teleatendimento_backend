@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import 'reflect-metadata';
@@ -12,6 +13,7 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('docs', app, documentFactory);
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
 bootstrap();

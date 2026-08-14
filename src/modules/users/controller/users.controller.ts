@@ -6,16 +6,15 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { Public } from 'src/common/decorators/public.decorator';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserResponseDto } from '../dto/user-response.dto';
-import { Role } from '../enum/role.enum';
 import { UsersService } from '../service/users.service';
 
 @Controller('users')
 @ApiTags('Users')
 @ApiBearerAuth()
-@Roles(Role.ADMIN)
+// @Roles(Role.ADMIN)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -34,6 +33,7 @@ export class UsersController {
     description:
       'Não autorizado. O usuário precisa ser um administrador para criar novos usuários.',
   })
+  @Public()
   create(@Body() dto: CreateUserDto): Promise<UserResponseDto> {
     return this.usersService.createUser(dto);
   }

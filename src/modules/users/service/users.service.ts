@@ -15,6 +15,7 @@ export class UsersService {
   ) {}
 
   async createUser(dto: CreateUserDto): Promise<UserResponseDto> {
+    console.log(dto);
     this.logger.log('Tentativa de criação de usuário', { email: dto.email, role: dto.role });
 
     const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
