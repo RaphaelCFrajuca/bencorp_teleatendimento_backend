@@ -71,7 +71,9 @@ export class MedicalRecordsService {
       throw new BadRequestException('Prontuário pode ser criado apenas para consulta em andamento');
     }
 
-    if (consultation.professionalId !== professionalId) {
+    const assignedProfessional = consultation.transferredToId || consultation.professionalId;
+    console.log('assignedProfessional:', assignedProfessional, 'professionalId:', professionalId);
+    if (assignedProfessional !== professionalId) {
       throw new ForbiddenException('Apenas o profissional atribuído pode criar prontuário');
     }
 

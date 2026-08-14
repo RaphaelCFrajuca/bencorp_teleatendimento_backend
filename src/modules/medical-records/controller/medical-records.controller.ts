@@ -41,9 +41,9 @@ export class MedicalRecordsController {
   })
   async create(
     @Body() dto: CreateMedicalRecordDto,
-    @CurrentUser() user: { sub: string },
+    @CurrentUser() user: { id: string },
   ): Promise<MedicalRecordResponseDto> {
-    return this.medicalRecordsService.createMedicalRecord(dto, user.sub);
+    return this.medicalRecordsService.createMedicalRecord(dto, user.id);
   }
 
   @Get(':id')
@@ -72,9 +72,9 @@ export class MedicalRecordsController {
   })
   async getById(
     @Param('id') id: string,
-    @CurrentUser() user: { sub: string },
+    @CurrentUser() user: { id: string },
   ): Promise<MedicalRecordResponseDto> {
-    return this.medicalRecordsService.getMedicalRecordById(id, user.sub);
+    return this.medicalRecordsService.getMedicalRecordById(id, user.id);
   }
 
   @Patch(':id')
@@ -108,9 +108,9 @@ export class MedicalRecordsController {
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateMedicalRecordDto,
-    @CurrentUser() user: { sub: string },
+    @CurrentUser() user: { id: string },
   ): Promise<MedicalRecordResponseDto> {
-    return this.medicalRecordsService.updateMedicalRecord(id, dto, user.sub);
+    return this.medicalRecordsService.updateMedicalRecord(id, dto, user.id);
   }
 
   @Post(':id/finalize')
@@ -143,9 +143,9 @@ export class MedicalRecordsController {
   })
   async finalize(
     @Param('id') id: string,
-    @CurrentUser() user: { sub: string },
+    @CurrentUser() user: { id: string },
   ): Promise<MedicalRecordResponseDto> {
-    return this.medicalRecordsService.finalizeMedicalRecord(id, user.sub);
+    return this.medicalRecordsService.finalizeMedicalRecord(id, user.id);
   }
 
   @Post(':id/appendix')
@@ -175,9 +175,9 @@ export class MedicalRecordsController {
   async addAppendix(
     @Param('id') id: string,
     @Body() dto: CreateMedicalRecordAppendixDto,
-    @CurrentUser() user: { sub: string },
+    @CurrentUser() user: { id: string },
   ): Promise<MedicalRecordAppendixResponseDto> {
-    return this.medicalRecordsService.addAppendix(id, dto, user.sub);
+    return this.medicalRecordsService.addAppendix(id, dto, user.id);
   }
 
   @Get(':id/appendices')
@@ -198,6 +198,10 @@ export class MedicalRecordsController {
   @ApiResponse({
     status: 404,
     description: 'Prontuário não encontrado',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Apenas o criador pode acessar os apêndices',
   })
   async getAppendices(@Param('id') id: string): Promise<MedicalRecordAppendixResponseDto[]> {
     return this.medicalRecordsService.getMedicalRecordAppendices(id);

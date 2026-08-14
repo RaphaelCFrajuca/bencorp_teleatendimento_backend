@@ -56,7 +56,11 @@ export interface MedicalRecordRepositoryInterface {
 
   getMedicalRecordAppendices(medicalRecordId: string): Promise<MedicalRecordAppendix[]>;
 
-  getConsultationById(
-    consultationId: string,
-  ): Promise<{ id: string; status: string; professionalId: string; patientId: string } | null>;
+  getConsultationById(consultationId: string): Promise<{
+    id: string;
+    status: string;
+    professionalId: string;
+    patientId: string;
+    transferredToId?: string | null;
+  } | null>;
 }
