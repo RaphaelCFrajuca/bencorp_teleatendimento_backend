@@ -26,11 +26,11 @@ import { ConsultationsService } from '../service/consultations.service';
 @Controller('consultations')
 @ApiTags('Consultations')
 @ApiBearerAuth()
-@Roles(Role.ADMIN, Role.NURSE, Role.DOCTOR)
 export class ConsultationsController {
   constructor(private readonly consultationsService: ConsultationsService) {}
 
   @Post()
+  @Roles(Role.NURSE)
   @ApiOperation({
     summary: 'Cria um novo atendimento',
     description: 'Cria um novo atendimento e o adiciona à fila de espera.',
@@ -51,12 +51,13 @@ export class ConsultationsController {
   })
   async create(
     @Body() dto: CreateConsultationDto,
-    @CurrentUser() user: any,
+    @CurrentUser() user: UserResponseDto,
   ): Promise<ConsultationResponseDto> {
     return this.consultationsService.createConsultation(dto, user.id);
   }
 
   @Get('queue')
+  @Roles(Role.NURSE, Role.DOCTOR)
   @ApiOperation({
     summary: 'Lista a fila de espera',
     description: 'Retorna atendimentos aguardando serem iniciados.',
@@ -91,6 +92,7 @@ export class ConsultationsController {
   }
 
   @Get('my')
+  @Roles(Role.NURSE, Role.DOCTOR)
   @ApiOperation({
     summary: 'Lista meus atendimentos',
     description: 'Retorna atendimentos do profissional autenticado.',
@@ -109,6 +111,7 @@ export class ConsultationsController {
   }
 
   @Get(':id')
+  @Roles(Role.NURSE, Role.DOCTOR)
   @ApiOperation({
     summary: 'Busca um atendimento por ID',
     description: 'Retorna os dados de um atendimento específico.',
@@ -137,6 +140,7 @@ export class ConsultationsController {
   }
 
   @Post(':id/start')
+  @Roles(Role.NURSE)
   @ApiOperation({
     summary: 'Inicia um atendimento',
     description: 'Move um atendimento de AGUARDANDO para EM_ANDAMENTO.',
@@ -211,6 +215,7 @@ export class ConsultationsController {
   }
 
   @Post(':id/finalize')
+  @Roles(Role.NURSE, Role.DOCTOR)
   @ApiOperation({
     summary: 'Finaliza um atendimento',
     description: 'Move um atendimento de EM_ANDAMENTO para FINALIZADO.',
@@ -243,6 +248,7 @@ export class ConsultationsController {
   }
 
   @Post(':id/cancel')
+  @Roles(Role.NURSE, Role.DOCTOR)
   @ApiOperation({
     summary: 'Cancela um atendimento',
     description: 'Move um atendimento de AGUARDANDO para CANCELADO.',
