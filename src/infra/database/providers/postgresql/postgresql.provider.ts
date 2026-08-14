@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm/data-source/DataSource.js';
 import { Database } from '../../interfaces/database.interface';
+import { AuditLogEntity } from './entities/audit-log.entity';
 import { ConsultationEntity } from './entities/consultation.entity';
 import { MedicalRecordAppendixEntity } from './entities/medical-record-appendix.entity';
 import { MedicalRecordEntity } from './entities/medical-record.entity';
@@ -27,6 +28,7 @@ export class PostgresqlProvider implements Database {
         ConsultationEntity,
         MedicalRecordEntity,
         MedicalRecordAppendixEntity,
+        AuditLogEntity,
       ],
       synchronize: true,
     });

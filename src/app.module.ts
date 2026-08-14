@@ -4,6 +4,8 @@ import { LoggerModule } from 'nestjs-pino';
 import { loggerModuleOptions } from './common/logging/logger-options';
 import { RequestLoggingInterceptor } from './common/logging/request-logging.interceptor';
 import { TraceIdMiddleware } from './common/logging/trace-id.middleware';
+import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
+import { MedicalRecordAuditInterceptor } from './modules/audit-logs/interceptor/medical-record-audit.interceptor';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/guards/roles.guard';
@@ -20,9 +22,11 @@ import { UsersModule } from './modules/users/users.module';
     PatientsModule,
     ConsultationsModule,
     MedicalRecordsModule,
+    AuditLogsModule,
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: RequestLoggingInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: MedicalRecordAuditInterceptor },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
   ],
