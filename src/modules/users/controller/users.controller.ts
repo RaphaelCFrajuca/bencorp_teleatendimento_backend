@@ -3,6 +3,7 @@ import {
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -37,6 +38,9 @@ export class UsersController {
   })
   @ApiConflictResponse({
     description: 'Conflito. O e-mail fornecido já está em uso por outro usuário.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Proibido. O usuário não tem permissão para criar novos usuários.',
   })
   create(@Body() dto: CreateUserDto): Promise<UserResponseDto> {
     return this.usersService.createUser(dto);
