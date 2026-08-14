@@ -19,6 +19,9 @@ export class CreateUserDto {
   @IsEnum(Role, {
     message: `role deve ser um dos seguintes valores: ${Object.values(Role).join(', ')}`,
   })
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Função do usuário',
+    enum: Role,
+  })
   role: Role;
 }

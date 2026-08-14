@@ -1,5 +1,11 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserResponseDto } from '../dto/user-response.dto';
@@ -23,6 +29,10 @@ export class UsersController {
   @ApiCreatedResponse({
     description: 'Usuário criado com sucesso',
     type: UserResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'Não autorizado. O usuário precisa ser um administrador para criar novos usuários.',
   })
   create(@Body() dto: CreateUserDto): Promise<UserResponseDto> {
     return this.usersService.createUser(dto);
