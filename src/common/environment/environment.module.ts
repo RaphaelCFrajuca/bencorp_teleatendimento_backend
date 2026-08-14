@@ -20,7 +20,11 @@ import { PostgresqlConfig } from '../../infra/database/providers/postgresql/inte
       provide: 'DATABASE',
       useValue: process.env.DATABASE,
     },
+    {
+      provide: 'JWT_SECRET',
+      useValue: process.env.JWT_SECRET,
+    },
   ],
-  exports: ['POSTGRESQL_CONFIG', 'DATABASE'],
+  exports: ['POSTGRESQL_CONFIG', 'DATABASE', 'JWT_SECRET'],
 })
 export class EnvironmentModule {}
