@@ -32,6 +32,11 @@ import { Database } from './interfaces/database.interface';
         repositoryFactory(databaseToken, RepositoryName.CONSULTATION, db, logger),
     },
   ],
-  exports: ['DATABASE_PROVIDER', 'USER_REPOSITORY', 'PATIENT_REPOSITORY', 'CONSULTATION_REPOSITORY'],
+  exports: [
+    'DATABASE_PROVIDER',
+    'USER_REPOSITORY',
+    'PATIENT_REPOSITORY',
+    'CONSULTATION_REPOSITORY',
+  ],
 })
 export class DatabaseModule {}

@@ -1,8 +1,8 @@
 import { Logger } from 'nestjs-pino';
 import { Database } from '../interfaces/database.interface';
+import { ConsultationRepository } from '../providers/postgresql/repositories/consultation.repository';
 import { PatientRepository } from '../providers/postgresql/repositories/patient.repository';
 import { UserRepository } from '../providers/postgresql/repositories/user.repository';
-import { ConsultationRepository } from '../providers/postgresql/repositories/consultation.repository';
 import { DatabaseProvider } from './database.factory';
 
 export enum RepositoryName {
