@@ -68,6 +68,20 @@ export class ConsultationsService {
     return consultations.map((c) => this.mapConsultationToResponse(c));
   }
 
+  async getConsultationsByPatient(
+    patientId: string,
+    professionalId: string,
+    status?: ConsultationStatus,
+  ): Promise<ConsultationResponseDto[]> {
+    this.logger.log(`Buscando atendimentos por paciente`, { patientId, professionalId, status });
+    const consultations = await this.consultationRepository.getConsultationsByPatient(
+      patientId,
+      professionalId,
+      status,
+    );
+    return consultations.map((c) => this.mapConsultationToResponse(c));
+  }
+
   async startConsultation(consultationId: string, professionalId: string): Promise<ConsultationResponseDto> {
     this.logger.log(`Iniciando atendimento`, { consultationId, professionalId });
     await this.consultationRepository.startConsultation(consultationId, professionalId);

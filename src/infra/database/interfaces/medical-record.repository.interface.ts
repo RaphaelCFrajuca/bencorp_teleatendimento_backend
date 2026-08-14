@@ -36,6 +36,17 @@ export interface MedicalRecordRepositoryInterface {
   getMedicalRecordById(id: string): Promise<MedicalRecord | null>;
 
   getMedicalRecordByConsultationId(consultationId: string): Promise<MedicalRecord | null>;
+  getMedicalRecordsByPatient(patientId: string): Promise<MedicalRecord[]>;
+  getConsultationsByPatientAndProfessional(
+    patientId: string,
+    professionalId: string,
+  ): Promise<
+    Array<{
+      id: string;
+      professionalId: string;
+      transferredToId?: string | null;
+    }>
+  >;
 
   updateMedicalRecord(
     id: string,

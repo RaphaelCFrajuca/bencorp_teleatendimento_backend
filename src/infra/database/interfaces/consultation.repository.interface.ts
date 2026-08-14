@@ -13,6 +13,11 @@ export interface ConsultationRepositoryInterface {
     professionalId: string,
     status?: ConsultationStatus,
   ): Promise<Consultation[]>;
+  getConsultationsByPatient(
+    patientId: string,
+    professionalId?: string,
+    status?: ConsultationStatus,
+  ): Promise<Consultation[]>;
   listPendingQueue(skip?: number, limit?: number): Promise<Consultation[]>;
   startConsultation(consultationId: string, professionalId: string): Promise<boolean>;
   transferToDoctor(consultationId: string, doctorId: string): Promise<Consultation | null>;

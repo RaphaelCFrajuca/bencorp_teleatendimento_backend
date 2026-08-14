@@ -26,6 +26,12 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { ConsultationResponseDto } from 'src/modules/consultations/dto/consultation-response.dto';
+import { ConsultationsService } from 'src/modules/consultations/service/consultations.service';
+import { MedicalRecordResponseDto } from 'src/modules/medical-records/dto/medical-record-response.dto';
+import { MedicalRecordsService } from 'src/modules/medical-records/service/medical-records.service';
+import { UserResponseDto } from 'src/modules/users/dto/user-response.dto';
 import { Role } from 'src/modules/users/enum/role.enum';
 import { CreatePatientDto } from '../dto/create-patient.dto';
 import { PatientResponseDto } from '../dto/patient-response.dto';
@@ -37,7 +43,11 @@ import { PatientsService } from '../service/patients.service';
 @ApiBearerAuth()
 @Roles(Role.ADMIN, Role.NURSE, Role.DOCTOR)
 export class PatientsController {
-  constructor(private readonly patientsService: PatientsService) {}
+  constructor(
+    private readonly patientsService: PatientsService,
+    private readonly consultationsService: ConsultationsService,
+    private readonly medicalRecordsService: MedicalRecordsService,
+  ) {}
 
   @Post()
   @ApiOperation({
@@ -126,6 +136,56 @@ export class PatientsController {
   })
   getPatientById(@Param('id') id: string): Promise<PatientResponseDto> {
     return this.patientsService.getPatientById(id);
+  }
+
+  @Get(':id/consultations')
+  @Roles(Role.NURSE, Role.DOCTOR)
+  @ApiOperation({
+    summary: 'Lista atendimentos por paciente',
+    description: 'Retorna atendimentos do paciente vinculados ao profissional autenticado.',
+  })
+  @ApiOkResponse({
+    description: 'Atendimentos retornados com sucesso.',
+    type: [ConsultationResponseDto],
+  })
+  @ApiUnauthorizedResponse({ description: 'Não autorizado.' })
+  @ApiForbiddenResponse({ description: 'Proibido.' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    format: 'uuid',
+    description: 'Identificador único do paciente',
+  })
+  async getPatientConsultations(
+    @Param('id') id: string,
+    @CurrentUser() user: UserResponseDto,
+  ): Promise<ConsultationResponseDto[]> {
+    return this.consultationsService.getConsultationsByPatient(id, user.id);
+  }
+
+  @Get(':id/medical-records')
+  @Roles(Role.NURSE, Role.DOCTOR)
+  @ApiOperation({
+    summary: 'Lista prontuários por paciente',
+    description: 'Retorna prontuários do paciente vinculados ao profissional autenticado.',
+  })
+  @ApiOkResponse({
+    description: 'Prontuários retornados com sucesso.',
+    type: [MedicalRecordResponseDto],
+  })
+  @ApiUnauthorizedResponse({ description: 'Não autorizado.' })
+  @ApiForbiddenResponse({ description: 'Proibido.' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    format: 'uuid',
+    description: 'Identificador único do paciente',
+  })
+  async getPatientMedicalRecords(
+    @Param('id') id: string,
+    @CurrentUser() user: UserResponseDto,
+  ): Promise<MedicalRecordResponseDto[]> {
+    return this.medicalRecordsService.getMedicalRecordsByPatient(id, user.id);
   }
 
   @Patch(':id')
