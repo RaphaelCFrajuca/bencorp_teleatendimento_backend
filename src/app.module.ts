@@ -12,6 +12,7 @@ import { RolesGuard } from './modules/auth/guards/roles.guard';
 import { ConsultationsModule } from './modules/consultations/consultations.module';
 import { MedicalRecordsModule } from './modules/medical-records/medical-records.module';
 import { PatientsModule } from './modules/patients/patients.module';
+import { RoomsModule } from './modules/rooms.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { UsersModule } from './modules/users/users.module';
     AuthModule,
     PatientsModule,
     ConsultationsModule,
+    RoomsModule,
     MedicalRecordsModule,
     AuditLogsModule,
   ],

@@ -4,6 +4,7 @@ import { AuditLogRepository } from '../providers/postgresql/repositories/audit-l
 import { ConsultationRepository } from '../providers/postgresql/repositories/consultation.repository';
 import { MedicalRecordRepository } from '../providers/postgresql/repositories/medical-record.repository';
 import { PatientRepository } from '../providers/postgresql/repositories/patient.repository';
+import { RoomRepository } from '../providers/postgresql/repositories/room.repository';
 import { UserRepository } from '../providers/postgresql/repositories/user.repository';
 import { DatabaseProvider } from './database.factory';
 
@@ -13,6 +14,7 @@ export enum RepositoryName {
   CONSULTATION = 'consultation',
   MEDICAL_RECORD = 'medical_record',
   AUDIT_LOG = 'audit_log',
+  ROOM = 'room',
 }
 
 export function repositoryFactory(
@@ -66,6 +68,16 @@ export function repositoryFactory(
       switch (String(database)) {
         case DatabaseProvider.POSTGRESQL:
           return new AuditLogRepository(db, logger);
+        default:
+          logger.error(`Repository ${repository} not implemented for database ${String(database)}`);
+          throw new Error(
+            `Repository ${repository} not implemented for database ${String(database)}`,
+          );
+      }
+    case RepositoryName.ROOM:
+      switch (String(database)) {
+        case DatabaseProvider.POSTGRESQL:
+          return new RoomRepository(db, logger);
         default:
           logger.error(`Repository ${repository} not implemented for database ${String(database)}`);
           throw new Error(

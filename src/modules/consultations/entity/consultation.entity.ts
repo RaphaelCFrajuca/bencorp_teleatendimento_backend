@@ -5,6 +5,7 @@ export interface Consultation {
   patientId: string;
   professionalId: string;
   status: ConsultationStatus;
+  roomVersion: number;
   transferredToId: string | null;
   createdAt: Date;
   updatedAt: Date;

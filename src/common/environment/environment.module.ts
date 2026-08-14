@@ -24,7 +24,26 @@ import { PostgresqlConfig } from '../../infra/database/providers/postgresql/inte
       provide: 'JWT_SECRET',
       useValue: process.env.JWT_SECRET,
     },
+    {
+      provide: 'LIVEKIT_API_KEY',
+      useValue: process.env.LIVEKIT_API_KEY,
+    },
+    {
+      provide: 'LIVEKIT_API_SECRET',
+      useValue: process.env.LIVEKIT_API_SECRET,
+    },
+    {
+      provide: 'LIVEKIT_URL',
+      useValue: process.env.LIVEKIT_URL,
+    },
   ],
-  exports: ['POSTGRESQL_CONFIG', 'DATABASE', 'JWT_SECRET'],
+  exports: [
+    'POSTGRESQL_CONFIG',
+    'DATABASE',
+    'JWT_SECRET',
+    'LIVEKIT_API_KEY',
+    'LIVEKIT_API_SECRET',
+    'LIVEKIT_URL',
+  ],
 })
 export class EnvironmentModule {}

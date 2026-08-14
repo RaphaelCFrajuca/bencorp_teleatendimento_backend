@@ -5,6 +5,7 @@ import { AuditLogEntity } from './entities/audit-log.entity';
 import { ConsultationEntity } from './entities/consultation.entity';
 import { MedicalRecordAppendixEntity } from './entities/medical-record-appendix.entity';
 import { MedicalRecordEntity } from './entities/medical-record.entity';
+import { PatientLinkEntity } from './entities/patient-link.entity';
 import { PatientEntity } from './entities/patient.entity';
 import { UserEntity } from './entities/user.entity';
 import type { PostgresqlConfig } from './interfaces/postgresql-config.interface';
@@ -26,6 +27,7 @@ export class PostgresqlProvider implements Database {
         UserEntity,
         PatientEntity,
         ConsultationEntity,
+        PatientLinkEntity,
         MedicalRecordEntity,
         MedicalRecordAppendixEntity,
         AuditLogEntity,
