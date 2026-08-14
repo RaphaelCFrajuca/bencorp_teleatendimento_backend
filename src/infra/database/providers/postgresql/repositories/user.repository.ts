@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 import type { Database } from 'src/infra/database/interfaces/database.interface';
 import { UserRepositoryInterface } from 'src/infra/database/interfaces/user.repository.interface';
@@ -38,7 +38,7 @@ export class UserRepository implements UserRepositoryInterface {
     });
     if (existingUser) {
       this.logger.warn(`Tentativa de criação de usuário já existente. Email: ${user.email}`);
-      throw new Error('Usuário já existe.');
+      throw new ConflictException('Usuário já existe.');
     }
 
     this.logger.log(`Criando usuário: ${user.email}`);
@@ -51,14 +51,14 @@ export class UserRepository implements UserRepositoryInterface {
 
     if (!existingUser) {
       this.logger.error(`Tentativa de atualização falhou. Usuário com ID ${id} não encontrado.`);
-      throw new Error(`Usuário com ID ${id} não encontrado.`);
+      throw new NotFoundException(`Usuário com ID ${id} não encontrado.`);
     }
 
     if (user.email && user.email !== existingUser.email) {
       const userWithSameEmail = await repository.findOne({ where: { email: user.email } });
       if (userWithSameEmail && userWithSameEmail.id !== id) {
         this.logger.warn(`Tentativa de atualização falhou. E-mail já cadastrado: ${user.email}`);
-        throw new Error('E-mail já cadastrado para outro usuário.');
+        throw new ConflictException('E-mail já cadastrado para outro usuário.');
       }
     }
 
@@ -73,7 +73,7 @@ export class UserRepository implements UserRepositoryInterface {
 
     if (!existingUser) {
       this.logger.error(`Tentativa de exclusão falhou. Usuário com ID ${id} não encontrado.`);
-      throw new Error(`Usuário com ID ${id} não encontrado.`);
+      throw new NotFoundException(`Usuário com ID ${id} não encontrado.`);
     }
 
     this.logger.log(`Excluindo usuário ID: ${id}`);
@@ -98,7 +98,7 @@ export class UserRepository implements UserRepositoryInterface {
     const user = await repository.findOne({ where: { id } });
     if (!user) {
       this.logger.error(`Usuário com ID ${id} não encontrado.`);
-      throw new Error(`Usuário com ID ${id} não encontrado.`);
+      throw new NotFoundException(`Usuário com ID ${id} não encontrado.`);
     }
     return user.role;
   }

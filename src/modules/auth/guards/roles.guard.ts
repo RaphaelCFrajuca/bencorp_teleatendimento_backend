@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';
-import { ROLES_KEY } from 'src/common/environment/decorators/roles.decorator';
+import { ROLES_KEY } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/modules/users/enum/role.enum';
 
 @Injectable()
