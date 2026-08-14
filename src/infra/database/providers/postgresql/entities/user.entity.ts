@@ -1,7 +1,8 @@
 import { User } from 'src/modules/users/entity/user.entity';
 import { Role } from 'src/modules/users/enum/role.enum';
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity({ name: 'users' })
 export class UserEntity implements User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
