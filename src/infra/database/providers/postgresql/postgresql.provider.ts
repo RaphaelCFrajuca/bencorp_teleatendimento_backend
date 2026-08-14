@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm/data-source/DataSource.js';
 import { Database } from '../../interfaces/database.interface';
+import { UserRepositoryInterface } from '../../interfaces/user.repository.interface';
 import { UserEntity } from './entities/user.entity';
 import type { PostgresqlConfig } from './interfaces/postgresql-config.interface';
 
@@ -8,6 +9,7 @@ import type { PostgresqlConfig } from './interfaces/postgresql-config.interface'
 export class PostgresqlProvider implements Database {
   private dataSource: DataSource;
   private initializing?: Promise<DataSource>;
+  private readonly userRepository: UserRepositoryInterface;
 
   constructor(private readonly postgresqlConfig: PostgresqlConfig) {
     this.dataSource = new DataSource({
@@ -20,6 +22,13 @@ export class PostgresqlProvider implements Database {
       entities: [UserEntity],
       synchronize: true,
     });
+  }
+
+  getRepository(repository: string) {
+    switch (repository) {
+      case 'USER_REPOSITORY':
+        return this.userRepository;
+    }
   }
 
   async connect(): Promise<DataSource> {

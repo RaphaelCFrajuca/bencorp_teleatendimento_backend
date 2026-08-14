@@ -1,7 +1,7 @@
-// modules/usuarios/usuarios.service.ts
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Logger } from 'nestjs-pino';
+import type { Database } from 'src/infra/database/interfaces/database.interface';
 import type { UserRepositoryInterface } from 'src/infra/database/interfaces/user.repository.interface';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserResponseDto } from '../dto/user-response.dto';
@@ -11,7 +11,8 @@ const SALT_ROUNDS = 12;
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly userRepository: UserRepositoryInterface,
+    @Inject('DATABASE_PROVIDER') private readonly database: Database,
+    @Inject('USER_REPOSITORY') private readonly userRepository: UserRepositoryInterface,
     private readonly logger: Logger,
   ) {}
 

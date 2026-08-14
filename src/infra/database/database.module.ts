@@ -11,7 +11,12 @@ import { databaseFactory } from './factory/database.factory';
       inject: [Logger, 'DATABASE', 'POSTGRESQL_CONFIG'],
       useFactory: databaseFactory,
     },
+    {
+      provide: 'USER_REPOSITORY',
+      inject: ['DATABASE_PROVIDER'],
+      useFactory: (database) => database.getRepository('USER_REPOSITORY'),
+    },
   ],
-  exports: ['DATABASE_PROVIDER'],
+  exports: ['DATABASE_PROVIDER', 'USER_REPOSITORY'],
 })
 export class DatabaseModule {}
