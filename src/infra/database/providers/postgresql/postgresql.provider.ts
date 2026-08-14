@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm/data-source/DataSource.js';
 import { Database } from '../../interfaces/database.interface';
 import { ConsultationEntity } from './entities/consultation.entity';
+import { MedicalRecordAppendixEntity } from './entities/medical-record-appendix.entity';
+import { MedicalRecordEntity } from './entities/medical-record.entity';
 import { PatientEntity } from './entities/patient.entity';
 import { UserEntity } from './entities/user.entity';
 import type { PostgresqlConfig } from './interfaces/postgresql-config.interface';
@@ -19,7 +21,13 @@ export class PostgresqlProvider implements Database {
       username: this.postgresqlConfig.user,
       password: this.postgresqlConfig.password,
       database: this.postgresqlConfig.database,
-      entities: [UserEntity, PatientEntity, ConsultationEntity],
+      entities: [
+        UserEntity,
+        PatientEntity,
+        ConsultationEntity,
+        MedicalRecordEntity,
+        MedicalRecordAppendixEntity,
+      ],
       synchronize: true,
     });
   }

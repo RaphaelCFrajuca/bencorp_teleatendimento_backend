@@ -8,6 +8,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/guards/roles.guard';
 import { ConsultationsModule } from './modules/consultations/consultations.module';
+import { MedicalRecordsModule } from './modules/medical-records/medical-records.module';
 import { PatientsModule } from './modules/patients/patients.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -18,6 +19,7 @@ import { UsersModule } from './modules/users/users.module';
     AuthModule,
     PatientsModule,
     ConsultationsModule,
+    MedicalRecordsModule,
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: RequestLoggingInterceptor },
