@@ -13,7 +13,7 @@ import { DatabaseModule } from 'src/infra/database/database.module';
       useFactory: (jwtSecret: string) => ({
         global: true,
         secret: jwtSecret,
-        signOptions: { expiresIn: '60s' },
+        signOptions: { expiresIn: '1d' },
       }),
     }),
   ],
