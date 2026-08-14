@@ -1,10 +1,12 @@
+import { Injectable } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
-import { Database } from 'src/infra/database/interfaces/database.interface';
+import type { Database } from 'src/infra/database/interfaces/database.interface';
 import { UserRepositoryInterface } from 'src/infra/database/interfaces/user.repository.interface';
 import { User } from 'src/modules/users/entity/user.entity';
 import { Role } from 'src/modules/users/enum/role.enum';
 import { UserEntity } from '../entities/user.entity';
 
+@Injectable()
 export class UserRepository implements UserRepositoryInterface {
   constructor(
     private readonly database: Database,
