@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
-import { AuditLogRepositoryInterface } from '../../../interfaces/audit-log.repository.interface';
-import type { Database } from '../../../interfaces/database.interface';
 import { AuditLog } from 'src/modules/audit-logs/entity/audit-log.entity';
 import { AuditAction } from 'src/modules/audit-logs/enum/audit-action.enum';
+import { AuditLogRepositoryInterface } from '../../../interfaces/audit-log.repository.interface';
+import type { Database } from '../../../interfaces/database.interface';
 import { AuditLogEntity } from '../entities/audit-log.entity';
 
 @Injectable()
@@ -71,7 +71,10 @@ export class AuditLogRepository implements AuditLogRepositoryInterface {
     return logs;
   }
 
-  async getAuditLogsByMedicalRecord(medicalRecordId: string, limit: number = 100): Promise<AuditLog[]> {
+  async getAuditLogsByMedicalRecord(
+    medicalRecordId: string,
+    limit: number = 100,
+  ): Promise<AuditLog[]> {
     const repository = await this.getRepository();
     const logs = await repository.find({
       where: { medicalRecordId },
@@ -101,7 +104,11 @@ export class AuditLogRepository implements AuditLogRepositoryInterface {
     return logs;
   }
 
-  async getAuditLogsInRange(startDate: Date, endDate: Date, limit: number = 100): Promise<AuditLog[]> {
+  async getAuditLogsInRange(
+    startDate: Date,
+    endDate: Date,
+    limit: number = 100,
+  ): Promise<AuditLog[]> {
     const repository = await this.getRepository();
     const logs = await repository
       .createQueryBuilder('al')
