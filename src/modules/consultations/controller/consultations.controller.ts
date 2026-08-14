@@ -16,6 +16,7 @@ import {
 } from '@nestjs/swagger';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { UserResponseDto } from 'src/modules/users/dto/user-response.dto';
 import { Role } from 'src/modules/users/enum/role.enum';
 import { ConsultationResponseDto } from '../dto/consultation-response.dto';
 import { CreateConsultationDto } from '../dto/create-consultation.dto';
@@ -101,7 +102,9 @@ export class ConsultationsController {
   @ApiUnauthorizedResponse({
     description: 'Não autorizado.',
   })
-  async getMyConsultations(@CurrentUser() user: any): Promise<ConsultationResponseDto[]> {
+  async getMyConsultations(
+    @CurrentUser() user: UserResponseDto,
+  ): Promise<ConsultationResponseDto[]> {
     return this.consultationsService.getConsultationsByProfessional(user.id);
   }
 
@@ -163,7 +166,7 @@ export class ConsultationsController {
   })
   async startConsultation(
     @Param('id') id: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: UserResponseDto,
   ): Promise<ConsultationResponseDto> {
     return this.consultationsService.startConsultation(id, user.id);
   }
