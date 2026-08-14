@@ -189,9 +189,7 @@ export class MedicalRecordRepository implements MedicalRecordRepositoryInterface
     return appendices;
   }
 
-  async getConsultationById(
-    consultationId: string,
-  ): Promise<{
+  async getConsultationById(consultationId: string): Promise<{
     id: string;
     status: string;
     professionalId: string;

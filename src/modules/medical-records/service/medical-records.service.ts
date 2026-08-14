@@ -161,7 +161,9 @@ export class MedicalRecordsService {
       return [];
     }
 
-    const allowedConsultationIds = new Set(allowedConsultations.map((consultation) => consultation.id));
+    const allowedConsultationIds = new Set(
+      allowedConsultations.map((consultation) => consultation.id),
+    );
     const records = await this.medicalRecordRepository.getMedicalRecordsByPatient(patientId);
 
     return records

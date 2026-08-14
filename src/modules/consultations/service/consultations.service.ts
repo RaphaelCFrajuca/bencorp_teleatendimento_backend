@@ -1,16 +1,17 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 import type { ConsultationRepositoryInterface } from 'src/infra/database/interfaces/consultation.repository.interface';
-import { Consultation } from '../entity/consultation.entity';
-import { ConsultationStatus } from '../enum/consultation-status.enum';
 import { ConsultationResponseDto } from '../dto/consultation-response.dto';
 import { CreateConsultationDto } from '../dto/create-consultation.dto';
 import { TransferToDoctorDto } from '../dto/transfer-to-doctor.dto';
+import { Consultation } from '../entity/consultation.entity';
+import { ConsultationStatus } from '../enum/consultation-status.enum';
 
 @Injectable()
 export class ConsultationsService {
   constructor(
-    @Inject('CONSULTATION_REPOSITORY') private readonly consultationRepository: ConsultationRepositoryInterface,
+    @Inject('CONSULTATION_REPOSITORY')
+    private readonly consultationRepository: ConsultationRepositoryInterface,
     private readonly logger: Logger,
   ) {}
 
@@ -27,7 +28,10 @@ export class ConsultationsService {
     };
   }
 
-  async createConsultation(dto: CreateConsultationDto, professionalId: string): Promise<ConsultationResponseDto> {
+  async createConsultation(
+    dto: CreateConsultationDto,
+    professionalId: string,
+  ): Promise<ConsultationResponseDto> {
     this.logger.log('Criando nova consulta', { patientId: dto.patientId, professionalId });
 
     const consultation = await this.consultationRepository.createConsultation({
@@ -64,7 +68,10 @@ export class ConsultationsService {
     status?: ConsultationStatus,
   ): Promise<ConsultationResponseDto[]> {
     this.logger.log(`Buscando atendimentos do profissional`, { professionalId, status });
-    const consultations = await this.consultationRepository.getConsultationsByProfessional(professionalId, status);
+    const consultations = await this.consultationRepository.getConsultationsByProfessional(
+      professionalId,
+      status,
+    );
     return consultations.map((c) => this.mapConsultationToResponse(c));
   }
 
@@ -82,7 +89,10 @@ export class ConsultationsService {
     return consultations.map((c) => this.mapConsultationToResponse(c));
   }
 
-  async startConsultation(consultationId: string, professionalId: string): Promise<ConsultationResponseDto> {
+  async startConsultation(
+    consultationId: string,
+    professionalId: string,
+  ): Promise<ConsultationResponseDto> {
     this.logger.log(`Iniciando atendimento`, { consultationId, professionalId });
     await this.consultationRepository.startConsultation(consultationId, professionalId);
     const consultation = await this.consultationRepository.getConsultationById(consultationId);
@@ -99,9 +109,15 @@ export class ConsultationsService {
     consultationId: string,
     dto: TransferToDoctorDto,
   ): Promise<ConsultationResponseDto> {
-    this.logger.log(`Transferindo atendimento para médico`, { consultationId, doctorId: dto.doctorId });
+    this.logger.log(`Transferindo atendimento para médico`, {
+      consultationId,
+      doctorId: dto.doctorId,
+    });
 
-    const consultation = await this.consultationRepository.transferToDoctor(consultationId, dto.doctorId);
+    const consultation = await this.consultationRepository.transferToDoctor(
+      consultationId,
+      dto.doctorId,
+    );
 
     if (!consultation) {
       throw new NotFoundException(`Atendimento com ID ${consultationId} não encontrado.`);

@@ -25,8 +25,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/common/decorators/roles.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { Roles } from 'src/common/decorators/roles.decorator';
 import { ConsultationResponseDto } from 'src/modules/consultations/dto/consultation-response.dto';
 import { ConsultationsService } from 'src/modules/consultations/service/consultations.service';
 import { MedicalRecordResponseDto } from 'src/modules/medical-records/dto/medical-record-response.dto';

@@ -84,9 +84,12 @@ export class ConsultationRepository implements ConsultationRepositoryInterface {
     });
 
     if (professionalId) {
-      query.andWhere('(c.professional_id = :professionalId OR c.transferred_to_id = :professionalId)', {
-        professionalId,
-      });
+      query.andWhere(
+        '(c.professional_id = :professionalId OR c.transferred_to_id = :professionalId)',
+        {
+          professionalId,
+        },
+      );
     }
 
     if (status) {
