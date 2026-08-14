@@ -31,12 +31,19 @@ import { Database } from './interfaces/database.interface';
       useFactory: (databaseToken: string, db: Database, logger: Logger) =>
         repositoryFactory(databaseToken, RepositoryName.CONSULTATION, db, logger),
     },
+    {
+      provide: 'MEDICAL_RECORD_REPOSITORY',
+      inject: ['DATABASE', 'DATABASE_PROVIDER', Logger],
+      useFactory: (databaseToken: string, db: Database, logger: Logger) =>
+        repositoryFactory(databaseToken, RepositoryName.MEDICAL_RECORD, db, logger),
+    },
   ],
   exports: [
     'DATABASE_PROVIDER',
     'USER_REPOSITORY',
     'PATIENT_REPOSITORY',
     'CONSULTATION_REPOSITORY',
+    'MEDICAL_RECORD_REPOSITORY',
   ],
 })
 export class DatabaseModule {}
