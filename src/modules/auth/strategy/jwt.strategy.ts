@@ -11,7 +11,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   constructor(
     @Inject('JWT_SECRET') jwtSecret: string,
-    private readonly userRepository: UserRepositoryInterface,
+    @Inject('USER_REPOSITORY') private readonly userRepository: UserRepositoryInterface,
     private readonly logger: Logger,
   ) {
     super({
