@@ -139,6 +139,38 @@ export class MedicalRecordsService {
     return this.mapMedicalRecordToResponse(record);
   }
 
+  async getMedicalRecordsByPatient(
+    patientId: string,
+    professionalId: string,
+  ): Promise<MedicalRecordResponseDto[]> {
+    this.logger.info(
+      {
+        patientId,
+        professionalId,
+      },
+      'Buscando prontuários por paciente',
+    );
+
+    const allowedConsultations =
+      await this.medicalRecordRepository.getConsultationsByPatientAndProfessional(
+        patientId,
+        professionalId,
+      );
+
+    if (allowedConsultations.length === 0) {
+      return [];
+    }
+
+    const allowedConsultationIds = new Set(
+      allowedConsultations.map((consultation) => consultation.id),
+    );
+    const records = await this.medicalRecordRepository.getMedicalRecordsByPatient(patientId);
+
+    return records
+      .filter((record) => allowedConsultationIds.has(record.consultationId))
+      .map((record) => this.mapMedicalRecordToResponse(record));
+  }
+
   async updateMedicalRecord(
     id: string,
     dto: UpdateMedicalRecordDto,

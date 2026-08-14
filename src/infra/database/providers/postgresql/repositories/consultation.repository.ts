@@ -67,6 +67,38 @@ export class ConsultationRepository implements ConsultationRepositoryInterface {
     return query.orderBy('c.created_at', 'DESC').getMany();
   }
 
+  async getConsultationsByPatient(
+    patientId: string,
+    professionalId?: string,
+    status?: ConsultationStatus,
+  ): Promise<Consultation[]> {
+    const repository = await this.getRepository();
+    this.logger.log(`Buscando atendimentos do paciente: ${patientId}`, {
+      patientId,
+      professionalId,
+      status,
+    });
+
+    const query = repository.createQueryBuilder('c').where('c.patient_id = :patientId', {
+      patientId,
+    });
+
+    if (professionalId) {
+      query.andWhere(
+        '(c.professional_id = :professionalId OR c.transferred_to_id = :professionalId)',
+        {
+          professionalId,
+        },
+      );
+    }
+
+    if (status) {
+      query.andWhere('c.status = :status', { status });
+    }
+
+    return query.orderBy('c.created_at', 'DESC').getMany();
+  }
+
   async listPendingQueue(skip: number = 0, limit: number = 50): Promise<Consultation[]> {
     const repository = await this.getRepository();
     this.logger.log(`Listando fila de espera`, { skip, limit });

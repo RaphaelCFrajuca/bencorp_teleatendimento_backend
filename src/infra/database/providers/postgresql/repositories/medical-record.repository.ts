@@ -87,6 +87,44 @@ export class MedicalRecordRepository implements MedicalRecordRepositoryInterface
     return record;
   }
 
+  async getMedicalRecordsByPatient(patientId: string): Promise<any[]> {
+    const repository = await this.getRepository();
+    const records = await repository.find({
+      where: { patientId },
+      order: { createdAt: 'DESC' },
+    });
+
+    this.logger.debug({ patientId, count: records.length }, 'Medical records fetched by patient');
+    return records;
+  }
+
+  async getConsultationsByPatientAndProfessional(
+    patientId: string,
+    professionalId: string,
+  ): Promise<
+    Array<{
+      id: string;
+      professionalId: string;
+      transferredToId?: string | null;
+    }>
+  > {
+    const repository = await this.getConsultationRepository();
+    const consultations = await repository
+      .createQueryBuilder('c')
+      .where('c.patient_id = :patientId', { patientId })
+      .andWhere('(c.professional_id = :professionalId OR c.transferred_to_id = :professionalId)', {
+        professionalId,
+      })
+      .select(['c.id', 'c.professionalId', 'c.transferredToId'])
+      .getMany();
+
+    return consultations.map((consultation) => ({
+      id: consultation.id,
+      professionalId: consultation.professionalId,
+      transferredToId: consultation.transferredToId,
+    }));
+  }
+
   async updateMedicalRecord(
     id: string,
     data: Partial<{
@@ -151,9 +189,7 @@ export class MedicalRecordRepository implements MedicalRecordRepositoryInterface
     return appendices;
   }
 
-  async getConsultationById(
-    consultationId: string,
-  ): Promise<{
+  async getConsultationById(consultationId: string): Promise<{
     id: string;
     status: string;
     professionalId: string;
