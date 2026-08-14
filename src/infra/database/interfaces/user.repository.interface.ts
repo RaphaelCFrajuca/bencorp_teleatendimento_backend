@@ -4,7 +4,7 @@ import { Role } from 'src/modules/users/enum/role.enum';
 export interface UserRepositoryInterface {
   getAllUsers(): Promise<User[]>;
   getUserById(id: string): Promise<User | null>;
-  createUser(user: User): Promise<User>;
+  createUser(user: Omit<User, 'id' | 'active'>): Promise<User>;
   updateUser(id: string, user: Partial<User>): Promise<User | null>;
   deleteUser(id: string): Promise<boolean>;
   getUserByEmail(email: string): Promise<User | null>;

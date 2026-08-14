@@ -30,16 +30,14 @@ export class UserRepository implements UserRepositoryInterface {
     return repository.findOne({ where: { id } });
   }
 
-  async createUser(user: User): Promise<User> {
+  async createUser(user: Omit<User, 'id' | 'active'>): Promise<User> {
     const repository = await this.getRepository();
 
     const existingUser = await repository.findOne({
-      where: [{ email: user.email }, { id: user.id }],
+      where: [{ email: user.email }],
     });
     if (existingUser) {
-      this.logger.warn(
-        `Tentativa de criação de usuário já existente. Email: ${user.email}, ID: ${user.id}`,
-      );
+      this.logger.warn(`Tentativa de criação de usuário já existente. Email: ${user.email}`);
       throw new Error('Usuário já existe.');
     }
 
