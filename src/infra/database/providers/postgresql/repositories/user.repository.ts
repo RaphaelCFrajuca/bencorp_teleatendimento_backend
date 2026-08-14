@@ -42,6 +42,7 @@ export class UserRepository implements UserRepositoryInterface {
   async getUserByName(name: string): Promise<User | null> {
     throw new Error('Método não implementado.');
   }
+
   async getRoleByUserId(id: string): Promise<Role> {
     const repository = await this.getRepository();
     const user = await repository.findOne({ where: { id } });
