@@ -1,5 +1,6 @@
 import { Logger } from 'nestjs-pino';
 import { Database } from '../interfaces/database.interface';
+import { AuditLogRepository } from '../providers/postgresql/repositories/audit-log.repository';
 import { ConsultationRepository } from '../providers/postgresql/repositories/consultation.repository';
 import { MedicalRecordRepository } from '../providers/postgresql/repositories/medical-record.repository';
 import { PatientRepository } from '../providers/postgresql/repositories/patient.repository';
@@ -11,6 +12,7 @@ export enum RepositoryName {
   PATIENT = 'patient',
   CONSULTATION = 'consultation',
   MEDICAL_RECORD = 'medical_record',
+  AUDIT_LOG = 'audit_log',
 }
 
 export function repositoryFactory(
@@ -54,6 +56,16 @@ export function repositoryFactory(
       switch (String(database)) {
         case DatabaseProvider.POSTGRESQL:
           return new MedicalRecordRepository(db, logger);
+        default:
+          logger.error(`Repository ${repository} not implemented for database ${String(database)}`);
+          throw new Error(
+            `Repository ${repository} not implemented for database ${String(database)}`,
+          );
+      }
+    case RepositoryName.AUDIT_LOG:
+      switch (String(database)) {
+        case DatabaseProvider.POSTGRESQL:
+          return new AuditLogRepository(db, logger);
         default:
           logger.error(`Repository ${repository} not implemented for database ${String(database)}`);
           throw new Error(

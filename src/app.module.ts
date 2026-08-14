@@ -7,6 +7,8 @@ import { TraceIdMiddleware } from './common/logging/trace-id.middleware';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/guards/roles.guard';
+import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
+import { MedicalRecordAuditInterceptor } from './modules/audit-logs/interceptor/medical-record-audit.interceptor';
 import { ConsultationsModule } from './modules/consultations/consultations.module';
 import { MedicalRecordsModule } from './modules/medical-records/medical-records.module';
 import { PatientsModule } from './modules/patients/patients.module';
@@ -20,9 +22,11 @@ import { UsersModule } from './modules/users/users.module';
     PatientsModule,
     ConsultationsModule,
     MedicalRecordsModule,
+    AuditLogsModule,
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: RequestLoggingInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: MedicalRecordAuditInterceptor },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
   ],

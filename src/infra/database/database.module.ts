@@ -37,6 +37,12 @@ import { Database } from './interfaces/database.interface';
       useFactory: (databaseToken: string, db: Database, logger: Logger) =>
         repositoryFactory(databaseToken, RepositoryName.MEDICAL_RECORD, db, logger),
     },
+    {
+      provide: 'AUDIT_LOG_REPOSITORY',
+      inject: ['DATABASE', 'DATABASE_PROVIDER', Logger],
+      useFactory: (databaseToken: string, db: Database, logger: Logger) =>
+        repositoryFactory(databaseToken, RepositoryName.AUDIT_LOG, db, logger),
+    },
   ],
   exports: [
     'DATABASE_PROVIDER',
@@ -44,6 +50,7 @@ import { Database } from './interfaces/database.interface';
     'PATIENT_REPOSITORY',
     'CONSULTATION_REPOSITORY',
     'MEDICAL_RECORD_REPOSITORY',
+    'AUDIT_LOG_REPOSITORY',
   ],
 })
 export class DatabaseModule {}
