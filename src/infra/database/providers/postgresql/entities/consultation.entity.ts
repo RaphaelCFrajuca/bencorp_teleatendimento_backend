@@ -1,6 +1,12 @@
 import { Consultation } from 'src/modules/consultations/entity/consultation.entity';
 import { ConsultationStatus } from 'src/modules/consultations/enum/consultation-status.enum';
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity({ name: 'consultations' })
 export class ConsultationEntity implements Consultation {
@@ -13,7 +19,13 @@ export class ConsultationEntity implements Consultation {
   @Column({ name: 'professional_id', type: 'uuid', nullable: false })
   professionalId: string;
 
-  @Column({ name: 'status', type: 'enum', enum: ConsultationStatus, nullable: false, default: ConsultationStatus.AGUARDANDO })
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: ConsultationStatus,
+    nullable: false,
+    default: ConsultationStatus.AGUARDANDO,
+  })
   status: ConsultationStatus;
 
   @Column({ name: 'room_version', type: 'integer', nullable: false, default: 0 })

@@ -1,7 +1,12 @@
-import { ConflictException, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
-import type { Database } from 'src/infra/database/interfaces/database.interface';
 import { ConsultationRepositoryInterface } from 'src/infra/database/interfaces/consultation.repository.interface';
+import type { Database } from 'src/infra/database/interfaces/database.interface';
 import { Consultation } from 'src/modules/consultations/entity/consultation.entity';
 import { ConsultationStatus } from 'src/modules/consultations/enum/consultation-status.enum';
 import { ConsultationEntity } from '../entities/consultation.entity';
@@ -20,10 +25,15 @@ export class ConsultationRepository implements ConsultationRepositoryInterface {
   }
 
   async createConsultation(
-    consultation: Omit<Consultation, 'id' | 'createdAt' | 'updatedAt' | 'finalisedAt' | 'roomVersion'>,
+    consultation: Omit<
+      Consultation,
+      'id' | 'createdAt' | 'updatedAt' | 'finalisedAt' | 'roomVersion'
+    >,
   ): Promise<Consultation> {
     const repository = await this.getRepository();
-    this.logger.log(`Criando atendimento: patientId=${consultation.patientId}, professionalId=${consultation.professionalId}`);
+    this.logger.log(
+      `Criando atendimento: patientId=${consultation.patientId}, professionalId=${consultation.professionalId}`,
+    );
     return repository.save({
       ...consultation,
       status: ConsultationStatus.AGUARDANDO,
@@ -42,8 +52,13 @@ export class ConsultationRepository implements ConsultationRepositoryInterface {
     status?: ConsultationStatus,
   ): Promise<Consultation[]> {
     const repository = await this.getRepository();
-    this.logger.log(`Buscando atendimentos do profissional: ${professionalId}`, { professionalId, status });
-    const query = repository.createQueryBuilder('c').where('c.professional_id = :professionalId', { professionalId });
+    this.logger.log(`Buscando atendimentos do profissional: ${professionalId}`, {
+      professionalId,
+      status,
+    });
+    const query = repository
+      .createQueryBuilder('c')
+      .where('c.professional_id = :professionalId', { professionalId });
 
     if (status) {
       query.andWhere('c.status = :status', { status });
@@ -109,7 +124,9 @@ export class ConsultationRepository implements ConsultationRepositoryInterface {
     const consultation = await repository.findOne({ where: { id: consultationId } });
 
     if (!consultation) {
-      this.logger.error(`Atendimento não encontrado para transferência: ${consultationId}`, { consultationId });
+      this.logger.error(`Atendimento não encontrado para transferência: ${consultationId}`, {
+        consultationId,
+      });
       throw new NotFoundException(`Atendimento com ID ${consultationId} não encontrado.`);
     }
 
@@ -137,7 +154,9 @@ export class ConsultationRepository implements ConsultationRepositoryInterface {
       const consultation = await repository.findOne({ where: { id: consultationId } });
 
       if (!consultation) {
-        this.logger.error(`Atendimento não encontrado para finalização: ${consultationId}`, { consultationId });
+        this.logger.error(`Atendimento não encontrado para finalização: ${consultationId}`, {
+          consultationId,
+        });
         throw new NotFoundException(`Atendimento com ID ${consultationId} não encontrado.`);
       }
 
@@ -146,7 +165,9 @@ export class ConsultationRepository implements ConsultationRepositoryInterface {
           consultationId,
           status: consultation.status,
         });
-        throw new UnprocessableEntityException('Apenas atendimentos em andamento podem ser finalizados.');
+        throw new UnprocessableEntityException(
+          'Apenas atendimentos em andamento podem ser finalizados.',
+        );
       }
 
       this.logger.log(`Finalizando atendimento`, { consultationId });
@@ -167,7 +188,9 @@ export class ConsultationRepository implements ConsultationRepositoryInterface {
         .execute();
 
       if ((result.affected ?? 0) === 0) {
-        throw new ConflictException('Atendimento já foi finalizado por outro fluxo ou está em estado inválido.');
+        throw new ConflictException(
+          'Atendimento já foi finalizado por outro fluxo ou está em estado inválido.',
+        );
       }
 
       await patientLinkRepository
@@ -188,7 +211,9 @@ export class ConsultationRepository implements ConsultationRepositoryInterface {
     const consultation = await repository.findOne({ where: { id: consultationId } });
 
     if (!consultation) {
-      this.logger.error(`Atendimento não encontrado para cancelamento: ${consultationId}`, { consultationId });
+      this.logger.error(`Atendimento não encontrado para cancelamento: ${consultationId}`, {
+        consultationId,
+      });
       throw new NotFoundException(`Atendimento com ID ${consultationId} não encontrado.`);
     }
 
@@ -197,7 +222,9 @@ export class ConsultationRepository implements ConsultationRepositoryInterface {
         consultationId,
         status: consultation.status,
       });
-      throw new UnprocessableEntityException('Apenas atendimentos aguardando podem ser cancelados.');
+      throw new UnprocessableEntityException(
+        'Apenas atendimentos aguardando podem ser cancelados.',
+      );
     }
 
     this.logger.log(`Cancelando atendimento`, { consultationId });

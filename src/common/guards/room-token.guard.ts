@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { createHash } from 'crypto';
 import { Logger } from 'nestjs-pino';
 import type { RoomRepositoryInterface } from 'src/modules/rooms/interface/room-repository.interface';

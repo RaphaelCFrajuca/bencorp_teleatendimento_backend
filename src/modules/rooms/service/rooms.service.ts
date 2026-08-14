@@ -1,4 +1,10 @@
-import { ConflictException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { createHash, randomBytes } from 'crypto';
 import { Logger } from 'nestjs-pino';
 import { ConsultationStatus } from 'src/modules/consultations/enum/consultation-status.enum';
@@ -152,7 +158,9 @@ export class RoomsService {
       throw new ForbiddenException('Acesso à sala não permitido.');
     }
 
-    const consultation = await this.roomRepository.getConsultationForRoom(consumedLink.consultationId);
+    const consultation = await this.roomRepository.getConsultationForRoom(
+      consumedLink.consultationId,
+    );
     if (!consultation || consultation.status !== ConsultationStatus.EM_ANDAMENTO) {
       this.logger.warn('Falha na emissão de token do paciente por atendimento indisponível', {
         consultationId: consumedLink.consultationId,

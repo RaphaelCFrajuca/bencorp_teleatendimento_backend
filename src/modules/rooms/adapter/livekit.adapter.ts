@@ -17,7 +17,13 @@ export class LivekitAdapter {
     participantRole: string;
     roomVersion: number;
     ttlSeconds: number;
-  }): Promise<{ token: string; roomName: string; identity: string; serverUrl: string; expiresInSeconds: number }> {
+  }): Promise<{
+    token: string;
+    roomName: string;
+    identity: string;
+    serverUrl: string;
+    expiresInSeconds: number;
+  }> {
     if (!this.apiKey || !this.apiSecret || !this.serverUrl) {
       this.logger.error('Configuração do LiveKit ausente');
       throw new InternalServerErrorException('Não foi possível emitir a credencial da sala.');

@@ -1,4 +1,11 @@
-import { MigrationInterface, QueryRunner, Table, TableColumn, TableForeignKey, TableIndex } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableColumn,
+  TableForeignKey,
+  TableIndex,
+} from 'typeorm';
 
 export class AddRoomVersionAndCreatePatientLinksTable1726334800000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {

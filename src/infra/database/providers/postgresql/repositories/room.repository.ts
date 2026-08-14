@@ -24,7 +24,10 @@ export class RoomRepository implements RoomRepositoryInterface {
       where: { id: consultationId },
     });
 
-    this.logger.log('Consulta de atendimento para sala', { consultationId, found: Boolean(consultation) });
+    this.logger.log('Consulta de atendimento para sala', {
+      consultationId,
+      found: Boolean(consultation),
+    });
     return consultation;
   }
 
