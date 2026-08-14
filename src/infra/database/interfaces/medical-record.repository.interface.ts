@@ -1,9 +1,11 @@
+import { MedicalRecordStatus } from 'src/modules/medical-records/enum/medical-record-status.enum';
+
 export interface MedicalRecord {
   id: string;
   consultationId: string;
   professionalId: string;
   patientId: string;
-  status: string;
+  status: MedicalRecordStatus;
   diagnose: string;
   treatment: string;
   observations?: string;
@@ -28,7 +30,7 @@ export interface MedicalRecordRepositoryInterface {
     diagnose: string;
     treatment: string;
     observations?: string;
-    status: string;
+    status: MedicalRecordStatus;
   }): Promise<MedicalRecord>;
 
   getMedicalRecordById(id: string): Promise<MedicalRecord | null>;
@@ -41,7 +43,7 @@ export interface MedicalRecordRepositoryInterface {
       diagnose: string;
       treatment: string;
       observations: string;
-      status: string;
+      status: MedicalRecordStatus;
     }>,
   ): Promise<MedicalRecord>;
 

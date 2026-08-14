@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
+import type { MedicalRecordRepositoryInterface } from 'src/infra/database/interfaces/medical-record.repository.interface';
 import { CreateMedicalRecordAppendixDto } from '../dto/create-medical-record-appendix.dto';
 import { CreateMedicalRecordDto } from '../dto/create-medical-record.dto';
 import { MedicalRecordAppendixResponseDto } from '../dto/medical-record-appendix-response.dto';
@@ -30,7 +31,7 @@ export interface MedicalRecord {
 export class MedicalRecordsService {
   constructor(
     @Inject('MEDICAL_RECORD_REPOSITORY')
-    private readonly medicalRecordRepository,
+    private readonly medicalRecordRepository: MedicalRecordRepositoryInterface,
     private readonly logger: PinoLogger,
   ) {}
 
@@ -58,27 +59,27 @@ export class MedicalRecordsService {
         consultationId: dto.consultationId,
         professionalId,
       },
-      'Creating medical record',
+      'Criando prontuário médico',
     );
 
     const consultation = await this.medicalRecordRepository.getConsultationById(dto.consultationId);
     if (!consultation) {
-      throw new NotFoundException('Consultation not found');
+      throw new NotFoundException('Consulta não encontrada');
     }
 
     if (consultation.status !== 'em_andamento') {
-      throw new BadRequestException('Medical record can only be created for ongoing consultation');
+      throw new BadRequestException('Prontuário pode ser criado apenas para consulta em andamento');
     }
 
     if (consultation.professionalId !== professionalId) {
-      throw new ForbiddenException('Only the assigned professional can create medical record');
+      throw new ForbiddenException('Apenas o profissional atribuído pode criar prontuário');
     }
 
     const existingRecord = await this.medicalRecordRepository.getMedicalRecordByConsultationId(
       dto.consultationId,
     );
     if (existingRecord) {
-      throw new BadRequestException('Medical record already exists for this consultation');
+      throw new BadRequestException('Prontuário já existe para esta consulta');
     }
 
     const record = await this.medicalRecordRepository.createMedicalRecord({
@@ -103,16 +104,16 @@ export class MedicalRecordsService {
         medicalRecordId: id,
         professionalId,
       },
-      'Fetching medical record',
+      'Buscando prontuário',
     );
 
     const record = await this.medicalRecordRepository.getMedicalRecordById(id);
     if (!record) {
-      throw new NotFoundException('Medical record not found');
+      throw new NotFoundException('Prontuário não encontrado');
     }
 
     if (professionalId && record.professionalId !== professionalId) {
-      throw new ForbiddenException('Access denied to this medical record');
+      throw new ForbiddenException('Acesso negado a este prontuário');
     }
 
     return this.mapMedicalRecordToResponse(record);
@@ -125,7 +126,7 @@ export class MedicalRecordsService {
       {
         consultationId,
       },
-      'Fetching medical record by consultation',
+      'Buscando prontuário por consulta',
     );
 
     const record =
@@ -147,20 +148,20 @@ export class MedicalRecordsService {
         medicalRecordId: id,
         professionalId,
       },
-      'Updating medical record',
+      'Atualizando prontuário',
     );
 
     const record = await this.medicalRecordRepository.getMedicalRecordById(id);
     if (!record) {
-      throw new NotFoundException('Medical record not found');
+      throw new NotFoundException('Prontuário não encontrado');
     }
 
     if (record.professionalId !== professionalId) {
-      throw new ForbiddenException('Only the creator can update this medical record');
+      throw new ForbiddenException('Apenas o criador pode atualizar este prontuário');
     }
 
     if (record.status === MedicalRecordStatus.FINALIZADO) {
-      throw new BadRequestException('Cannot update finalized medical record');
+      throw new BadRequestException('Não é possível atualizar prontuário finalizado');
     }
 
     const updated = await this.medicalRecordRepository.updateMedicalRecord(id, dto);
@@ -176,20 +177,20 @@ export class MedicalRecordsService {
         medicalRecordId: id,
         professionalId,
       },
-      'Finalizing medical record',
+      'Finalizando prontuário',
     );
 
     const record = await this.medicalRecordRepository.getMedicalRecordById(id);
     if (!record) {
-      throw new NotFoundException('Medical record not found');
+      throw new NotFoundException('Prontuário não encontrado');
     }
 
     if (record.professionalId !== professionalId) {
-      throw new ForbiddenException('Only the creator can finalize this medical record');
+      throw new ForbiddenException('Apenas o criador pode finalizar este prontuário');
     }
 
     if (record.status === MedicalRecordStatus.FINALIZADO) {
-      throw new BadRequestException('Medical record is already finalized');
+      throw new BadRequestException('Prontuário já está finalizado');
     }
 
     const updated = await this.medicalRecordRepository.updateMedicalRecord(id, {
@@ -209,16 +210,18 @@ export class MedicalRecordsService {
         medicalRecordId,
         professionalId,
       },
-      'Adding appendix to medical record',
+      'Adicionando apêndice ao prontuário',
     );
 
     const record = await this.medicalRecordRepository.getMedicalRecordById(medicalRecordId);
     if (!record) {
-      throw new NotFoundException('Medical record not found');
+      throw new NotFoundException('Prontuário não encontrado');
     }
 
     if (record.status !== MedicalRecordStatus.FINALIZADO) {
-      throw new BadRequestException('Appendix can only be added to finalized medical records');
+      throw new BadRequestException(
+        'Apêndice pode ser adicionado apenas a prontuários finalizados',
+      );
     }
 
     const appendix = await this.medicalRecordRepository.createMedicalRecordAppendix({
@@ -245,7 +248,7 @@ export class MedicalRecordsService {
       {
         medicalRecordId,
       },
-      'Fetching medical record appendices',
+      'Buscando apêndices do prontuário',
     );
 
     const record = await this.medicalRecordRepository.getMedicalRecordById(medicalRecordId);
