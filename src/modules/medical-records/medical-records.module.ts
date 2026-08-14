@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../../infra/database/database.module';
-import { MedicalRecordsService } from './service/medical-records.service';
 import { MedicalRecordsController } from './controller/medical-records.controller';
+import { MedicalRecordsService } from './service/medical-records.service';
 
 @Module({
   imports: [DatabaseModule],

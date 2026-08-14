@@ -12,12 +12,11 @@ import { MedicalRecordsService } from '../service/medical-records.service';
 
 @Controller('medical-records')
 @ApiBearerAuth()
-@Roles(Role.DOCTOR, Role.NURSE)
+@Roles(Role.DOCTOR)
 export class MedicalRecordsController {
   constructor(private readonly medicalRecordsService: MedicalRecordsService) {}
 
   @Post()
-  @Roles(Role.DOCTOR)
   @ApiOperation({
     summary: 'Criar prontuário médico',
     description:
@@ -48,7 +47,6 @@ export class MedicalRecordsController {
   }
 
   @Get(':id')
-  @Roles(Role.DOCTOR, Role.NURSE)
   @ApiOperation({
     summary: 'Obter prontuário por ID',
     description:
@@ -80,7 +78,6 @@ export class MedicalRecordsController {
   }
 
   @Patch(':id')
-  @Roles(Role.DOCTOR)
   @ApiOperation({
     summary: 'Atualizar prontuário',
     description:
@@ -117,7 +114,6 @@ export class MedicalRecordsController {
   }
 
   @Post(':id/finalize')
-  @Roles(Role.DOCTOR)
   @ApiOperation({
     summary: 'Finalizar prontuário',
     description:
@@ -153,7 +149,6 @@ export class MedicalRecordsController {
   }
 
   @Post(':id/appendix')
-  @Roles(Role.DOCTOR)
   @ApiOperation({
     summary: 'Adicionar apêndice ao prontuário',
     description:
@@ -186,7 +181,6 @@ export class MedicalRecordsController {
   }
 
   @Get(':id/appendices')
-  @Roles(Role.DOCTOR, Role.NURSE)
   @ApiOperation({
     summary: 'Obter apêndices do prontuário',
     description: 'Recuperar todos os apêndices (correções) de um prontuário.',

@@ -1,5 +1,5 @@
-import { MedicalRecordStatus } from '../enum/medical-record-status.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { MedicalRecordStatus } from '../enum/medical-record-status.enum';
 
 export class MedicalRecordResponseDto {
   @ApiProperty()

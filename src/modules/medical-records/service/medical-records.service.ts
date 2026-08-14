@@ -1,10 +1,16 @@
-import { Inject, Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
-import { CreateMedicalRecordDto } from '../dto/create-medical-record.dto';
-import { UpdateMedicalRecordDto } from '../dto/update-medical-record.dto';
 import { CreateMedicalRecordAppendixDto } from '../dto/create-medical-record-appendix.dto';
-import { MedicalRecordResponseDto } from '../dto/medical-record-response.dto';
+import { CreateMedicalRecordDto } from '../dto/create-medical-record.dto';
 import { MedicalRecordAppendixResponseDto } from '../dto/medical-record-appendix-response.dto';
+import { MedicalRecordResponseDto } from '../dto/medical-record-response.dto';
+import { UpdateMedicalRecordDto } from '../dto/update-medical-record.dto';
 import { MedicalRecordStatus } from '../enum/medical-record-status.enum';
 
 export interface MedicalRecord {
@@ -122,9 +128,8 @@ export class MedicalRecordsService {
       'Fetching medical record by consultation',
     );
 
-    const record = await this.medicalRecordRepository.getMedicalRecordByConsultationId(
-      consultationId,
-    );
+    const record =
+      await this.medicalRecordRepository.getMedicalRecordByConsultationId(consultationId);
     if (!record) {
       return null;
     }
@@ -248,9 +253,8 @@ export class MedicalRecordsService {
       throw new NotFoundException('Medical record not found');
     }
 
-    const appendices = await this.medicalRecordRepository.getMedicalRecordAppendices(
-      medicalRecordId,
-    );
+    const appendices =
+      await this.medicalRecordRepository.getMedicalRecordAppendices(medicalRecordId);
 
     return appendices.map((appendix) => ({
       id: appendix.id,
