@@ -28,6 +28,8 @@ export class PostgresqlProvider implements Database {
     switch (repository) {
       case 'USER_REPOSITORY':
         return this.userRepository;
+      default:
+        throw new Error(`Repositório não encontrado: ${repository}`);
     }
   }
 
