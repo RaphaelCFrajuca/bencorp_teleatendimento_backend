@@ -9,9 +9,10 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/guards/roles.guard';
 import { PatientsModule } from './modules/patients/patients.module';
 import { UsersModule } from './modules/users/users.module';
+import { ConsultationsModule } from './modules/consultations/consultations.module';
 
 @Module({
-  imports: [LoggerModule.forRoot(loggerModuleOptions), UsersModule, AuthModule, PatientsModule],
+  imports: [LoggerModule.forRoot(loggerModuleOptions), UsersModule, AuthModule, PatientsModule, ConsultationsModule],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: RequestLoggingInterceptor },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
