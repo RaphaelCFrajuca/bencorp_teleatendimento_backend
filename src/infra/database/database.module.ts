@@ -19,7 +19,13 @@ import { Database } from './interfaces/database.interface';
       useFactory: (databaseToken: string, db: Database, logger: Logger) =>
         repositoryFactory(databaseToken, RepositoryName.USER, db, logger),
     },
+    {
+      provide: 'PATIENT_REPOSITORY',
+      inject: ['DATABASE', 'DATABASE_PROVIDER', Logger],
+      useFactory: (databaseToken: string, db: Database, logger: Logger) =>
+        repositoryFactory(databaseToken, RepositoryName.PATIENT, db, logger),
+    },
   ],
-  exports: ['DATABASE_PROVIDER', 'USER_REPOSITORY'],
+  exports: ['DATABASE_PROVIDER', 'USER_REPOSITORY', 'PATIENT_REPOSITORY'],
 })
 export class DatabaseModule {}
