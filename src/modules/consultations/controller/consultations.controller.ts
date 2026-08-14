@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -20,16 +11,16 @@ import {
   ApiParam,
   ApiQuery,
   ApiTags,
-  ApiUnprocessableEntityResponse,
   ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/modules/users/enum/role.enum';
-import { ConsultationsService } from '../service/consultations.service';
 import { ConsultationResponseDto } from '../dto/consultation-response.dto';
 import { CreateConsultationDto } from '../dto/create-consultation.dto';
 import { TransferToDoctorDto } from '../dto/transfer-to-doctor.dto';
+import { ConsultationsService } from '../service/consultations.service';
 
 @Controller('consultations')
 @ApiTags('Consultations')
