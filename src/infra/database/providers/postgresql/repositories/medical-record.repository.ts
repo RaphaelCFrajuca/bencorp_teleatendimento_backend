@@ -153,7 +153,13 @@ export class MedicalRecordRepository implements MedicalRecordRepositoryInterface
 
   async getConsultationById(
     consultationId: string,
-  ): Promise<{ id: string; status: string; professionalId: string; patientId: string; transferredToId?: string | null } | null> {
+  ): Promise<{
+    id: string;
+    status: string;
+    professionalId: string;
+    patientId: string;
+    transferredToId?: string | null;
+  } | null> {
     const repository = await this.getConsultationRepository();
     const consultation = await repository.findOne({
       where: { id: consultationId },
