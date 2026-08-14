@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { Logger, LoggerModule } from 'nestjs-pino';
 import { EnvironmentModule } from '../../common/environment/environment.module';
 import { databaseFactory } from './factory/database.factory';
+import { RepositoryName, repositoryFactory } from './factory/repository.factory';
+import { Database } from './interfaces/database.interface';
 
 @Module({
   imports: [EnvironmentModule, LoggerModule.forRoot()],
@@ -13,8 +15,9 @@ import { databaseFactory } from './factory/database.factory';
     },
     {
       provide: 'USER_REPOSITORY',
-      inject: ['DATABASE_PROVIDER'],
-      useFactory: (database) => database.getRepository('USER_REPOSITORY'),
+      inject: ['DATABASE', 'DATABASE_PROVIDER', Logger],
+      useFactory: (databaseToken: string, db: Database, logger: Logger) =>
+        repositoryFactory(databaseToken, RepositoryName.USER, db, logger),
     },
   ],
   exports: ['DATABASE_PROVIDER', 'USER_REPOSITORY'],
