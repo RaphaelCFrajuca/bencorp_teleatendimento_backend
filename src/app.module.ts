@@ -7,10 +7,11 @@ import { TraceIdMiddleware } from './common/logging/trace-id.middleware';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/guards/roles.guard';
+import { PatientsModule } from './modules/patients/patients.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
-  imports: [LoggerModule.forRoot(loggerModuleOptions), UsersModule, AuthModule],
+  imports: [LoggerModule.forRoot(loggerModuleOptions), UsersModule, AuthModule, PatientsModule],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: RequestLoggingInterceptor },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
