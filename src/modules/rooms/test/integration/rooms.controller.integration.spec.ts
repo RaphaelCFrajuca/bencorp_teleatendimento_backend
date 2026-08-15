@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
-import { RoomTokenGuard } from 'src/common/guards/room-token.guard';
 import { Logger } from 'nestjs-pino';
+import { RoomTokenGuard } from 'src/common/guards/room-token.guard';
 import { RoomsController } from '../../controller/rooms.controller';
 import { RoomsService } from '../../service/rooms.service';
 

@@ -1,6 +1,6 @@
 import { UnauthorizedException } from '@nestjs/common';
-import { JwtStrategy } from '../../strategy/jwt.strategy';
 import { Role } from 'src/modules/users/enum/role.enum';
+import { JwtStrategy } from '../../strategy/jwt.strategy';
 
 describe('JwtStrategy', () => {
   const logger = {

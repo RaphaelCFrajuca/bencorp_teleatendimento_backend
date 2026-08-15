@@ -1,6 +1,5 @@
 import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
 const mockCanActivate = jest.fn();

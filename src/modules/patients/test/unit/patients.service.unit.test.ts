@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
-import { PatientsService } from '../../service/patients.service';
 import { PatientStatus } from '../../enum/patient-status.enum';
+import { PatientsService } from '../../service/patients.service';
 
 describe('PatientsService', () => {
   const logger = {

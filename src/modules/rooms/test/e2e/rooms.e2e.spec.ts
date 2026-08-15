@@ -1,8 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import request from 'supertest';
 import { Logger } from 'nestjs-pino';
 import { RoomTokenGuard } from 'src/common/guards/room-token.guard';
+import request from 'supertest';
 import { RoomsController } from '../../controller/rooms.controller';
 import { RoomsService } from '../../service/rooms.service';
 

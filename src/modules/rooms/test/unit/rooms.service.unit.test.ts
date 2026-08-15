@@ -1,7 +1,7 @@
 import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { RoomsService } from '../../service/rooms.service';
 import { ConsultationStatus } from 'src/modules/consultations/enum/consultation-status.enum';
 import { Role } from 'src/modules/users/enum/role.enum';
+import { RoomsService } from '../../service/rooms.service';
 
 describe('RoomsService', () => {
   const roomRepository = {

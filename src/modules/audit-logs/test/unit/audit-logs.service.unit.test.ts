@@ -1,5 +1,5 @@
-import { AuditLogsService } from '../../service/audit-logs.service';
 import { AuditAction } from '../../enum/audit-action.enum';
+import { AuditLogsService } from '../../service/audit-logs.service';
 
 describe('AuditLogsService', () => {
   const logger = {

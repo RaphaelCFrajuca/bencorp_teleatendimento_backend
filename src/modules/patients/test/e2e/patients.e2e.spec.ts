@@ -1,10 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { ConsultationsService } from 'src/modules/consultations/service/consultations.service';
+import { MedicalRecordsService } from 'src/modules/medical-records/service/medical-records.service';
 import request from 'supertest';
 import { PatientsController } from '../../controller/patients.controller';
 import { PatientsService } from '../../service/patients.service';
-import { ConsultationsService } from 'src/modules/consultations/service/consultations.service';
-import { MedicalRecordsService } from 'src/modules/medical-records/service/medical-records.service';
 
 describe('Patients e2e', () => {
   let app: INestApplication;

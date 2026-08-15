@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { UsersService } from '../../service/users.service';
 import { Role } from '../../enum/role.enum';
+import { UsersService } from '../../service/users.service';
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn(),

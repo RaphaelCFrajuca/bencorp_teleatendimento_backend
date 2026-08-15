@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
-import { ConsultationsService } from '../../service/consultations.service';
 import { ConsultationStatus } from '../../enum/consultation-status.enum';
+import { ConsultationsService } from '../../service/consultations.service';
 
 describe('ConsultationsService', () => {
   const logger = {

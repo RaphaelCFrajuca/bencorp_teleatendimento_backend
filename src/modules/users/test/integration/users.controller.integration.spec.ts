@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { UsersController } from '../../controller/users.controller';
-import { UsersService } from '../../service/users.service';
 import { Role } from '../../enum/role.enum';
+import { UsersService } from '../../service/users.service';
 
 describe('UsersController Integration', () => {
   const usersService = {

@@ -1,9 +1,9 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { Role } from 'src/modules/users/enum/role.enum';
 import request from 'supertest';
 import { AuthController } from '../../controller/auth.controller';
 import { AuthService } from '../../service/auth.service';
-import { Role } from 'src/modules/users/enum/role.enum';
 
 describe('Auth e2e', () => {
   let app: INestApplication;

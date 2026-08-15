@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
-import { PatientsController } from '../../controller/patients.controller';
-import { PatientsService } from '../../service/patients.service';
 import { ConsultationsService } from 'src/modules/consultations/service/consultations.service';
 import { MedicalRecordsService } from 'src/modules/medical-records/service/medical-records.service';
+import { PatientsController } from '../../controller/patients.controller';
+import { PatientsService } from '../../service/patients.service';
 
 describe('PatientsController Integration', () => {
   const patientsService = {

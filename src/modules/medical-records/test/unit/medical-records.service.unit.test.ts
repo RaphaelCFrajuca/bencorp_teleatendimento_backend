@@ -1,6 +1,6 @@
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { MedicalRecordsService } from '../../service/medical-records.service';
 import { MedicalRecordStatus } from '../../enum/medical-record-status.enum';
+import { MedicalRecordsService } from '../../service/medical-records.service';
 
 describe('MedicalRecordsService', () => {
   const logger = {
@@ -87,9 +87,9 @@ describe('MedicalRecordsService', () => {
       status: MedicalRecordStatus.FINALIZADO,
     });
 
-    await expect(
-      service.updateMedicalRecord('m1', { observations: 'Novo' }, 'u1'),
-    ).rejects.toThrow(BadRequestException);
+    await expect(service.updateMedicalRecord('m1', { observations: 'Novo' }, 'u1')).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('deve finalizar prontuário', async () => {
