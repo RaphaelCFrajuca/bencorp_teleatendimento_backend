@@ -98,6 +98,7 @@ export class UsersController {
   @ApiForbiddenResponse({
     description: 'Proibido. O usuário não tem permissão para consultar usuários.',
   })
+  @Roles(Role.DOCTOR, Role.NURSE, Role.ADMIN)
   getDoctorUsers(): Promise<UserResponseDto[]> {
     return this.usersService.getDoctorUsers();
   }
@@ -117,6 +118,7 @@ export class UsersController {
   @ApiForbiddenResponse({
     description: 'Proibido. O usuário não tem permissão para consultar usuários.',
   })
+  @Roles(Role.DOCTOR, Role.NURSE, Role.ADMIN)
   getNurseUsers(): Promise<UserResponseDto[]> {
     return this.usersService.getNurseUsers();
   }
