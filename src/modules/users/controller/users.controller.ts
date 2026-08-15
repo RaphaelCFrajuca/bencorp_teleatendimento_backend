@@ -83,6 +83,44 @@ export class UsersController {
     return this.usersService.getAllUsers();
   }
 
+  @Get('doctors')
+  @ApiOperation({
+    summary: 'Lista usuários médicos',
+    description: 'Retorna todos os usuários com role de médico.',
+  })
+  @ApiOkResponse({
+    description: 'Lista de médicos retornada com sucesso.',
+    type: [UserResponseDto],
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Não autorizado. O usuário precisa estar autenticado.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Proibido. O usuário não tem permissão para consultar usuários.',
+  })
+  getDoctorUsers(): Promise<UserResponseDto[]> {
+    return this.usersService.getDoctorUsers();
+  }
+
+  @Get('nurses')
+  @ApiOperation({
+    summary: 'Lista usuários enfermeiros',
+    description: 'Retorna todos os usuários com role de enfermeiro.',
+  })
+  @ApiOkResponse({
+    description: 'Lista de enfermeiros retornada com sucesso.',
+    type: [UserResponseDto],
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Não autorizado. O usuário precisa estar autenticado.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Proibido. O usuário não tem permissão para consultar usuários.',
+  })
+  getNurseUsers(): Promise<UserResponseDto[]> {
+    return this.usersService.getNurseUsers();
+  }
+
   @Get('email')
   @ApiOperation({
     summary: 'Busca um usuário pelo e-mail',

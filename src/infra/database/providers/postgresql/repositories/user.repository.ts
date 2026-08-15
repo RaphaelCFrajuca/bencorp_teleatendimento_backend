@@ -24,6 +24,12 @@ export class UserRepository implements UserRepositoryInterface {
     return repository.find();
   }
 
+  async getUsersByRole(role: Role): Promise<User[]> {
+    const repository = await this.getRepository();
+    this.logger.log(`Buscando usuários por role: ${role}`);
+    return repository.find({ where: { role } });
+  }
+
   async getUserById(id: string): Promise<User | null> {
     const repository = await this.getRepository();
     this.logger.log(`Buscando usuário por ID: ${id}`);

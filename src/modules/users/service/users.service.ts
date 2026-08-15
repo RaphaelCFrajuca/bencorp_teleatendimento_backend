@@ -54,6 +54,18 @@ export class UsersService {
     return users.map((user) => this.mapUserToResponse(user));
   }
 
+  async getDoctorUsers(): Promise<UserResponseDto[]> {
+    this.logger.log('Listando usuários com role de médico');
+    const users = await this.userRepository.getUsersByRole(Role.DOCTOR);
+    return users.map((user) => this.mapUserToResponse(user));
+  }
+
+  async getNurseUsers(): Promise<UserResponseDto[]> {
+    this.logger.log('Listando usuários com role de enfermeiro');
+    const users = await this.userRepository.getUsersByRole(Role.NURSE);
+    return users.map((user) => this.mapUserToResponse(user));
+  }
+
   async getUserById(id: string): Promise<UserResponseDto> {
     this.logger.log(`Buscando usuário por ID: ${id}`);
     const user = await this.userRepository.getUserById(id);
