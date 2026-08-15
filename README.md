@@ -1,98 +1,289 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# BenCorp Teleatendimento
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Recorte simplificado de uma plataforma de teleatendimento: fila de pronto atendimento digital, onde profissionais de saúde (enfermeiros e médicos) atendem pacientes por videochamada e registram prontuário. Desenvolvido como case técnico para a vaga de Dev Fullstack Sênior — BenCorp.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+> Requisito central do case: nenhuma rota, dado ou sala de vídeo pode ser acessada sem autorização explícita, independentemente do frontend. Toda a arquitetura foi desenhada em função disso.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Índice
 
-## Project setup
+- [Stack utilizada](#stack-utilizada)
+- [Estrutura de pastas](#estrutura-de-pastas)
+- [Como rodar localmente](#como-rodar-localmente)
+- [Como rodar com Docker](#como-rodar-com-docker)
+- [Variáveis de ambiente](#variáveis-de-ambiente)
+- [Documentação da API](#documentação-da-api)
+- [Perfis e regras de acesso](#perfis-e-regras-de-acesso)
+- [Decisões técnicas e trade-offs](#decisões-técnicas-e-trade-offs)
+- [Limitações conhecidas](#limitações-conhecidas)
+- [Uso de IA no desenvolvimento](#uso-de-ia-no-desenvolvimento)
 
-```bash
-$ npm install
+---
+
+## Stack utilizada
+
+**Backend**
+
+- Node.js + NestJS + TypeScript
+- TypeORM + PostgreSQL
+- JWT (Passport) para autenticação
+- nestjs-pino para logging estruturado
+- LiveKit (SDK server) para emissão de credenciais de sala de vídeo
+- Docker
+
+**Frontend**
+
+- React + Vite + TypeScript
+- React Router
+- TanStack Query (cache e revalidação de dados de servidor)
+- React Hook Form + Zod (formulários e validação)
+- LiveKit Client + `@livekit/components-react` (consumo da sala de vídeo)
+- PWA (`vite-plugin-pwa`)
+
+---
+
+## Estrutura de pastas
+
+O projeto segue a estrutura modular do Nest, com um ajuste: cada módulo é organizado **por tipo de arquivo** (`controller`, `service`, `entity`, `dto`, `enum`), não por camada de domínio (`domain/application/infrastructure`). A separação de responsabilidades é mantida pelo uso de interfaces de repositório injetadas por DI, não pela estrutura de pastas em si.
+
+```
+backend/
+  src/
+    modules/
+      auth/
+        controller/
+        service/
+        strategy/
+        dto/
+      users/
+        controller/
+        service/
+        entity/
+        enum/
+        dto/
+      patients/
+        controller/
+        service/
+        entity/
+        dto/
+      consultations/
+        controller/
+        service/
+        entity/
+        enum/
+        dto/
+      medical-records/
+        controller/
+        service/
+        entity/
+        dto/
+      rooms/
+        controller/
+        service/
+        dto/
+    common/
+      guards/            # JwtAuthGuard, RolesGuard, RoomTokenGuard
+      decorators/         # @Roles, @Public, @CurrentUser
+      interceptors/        # AuditLogInterceptor
+      filters/              # mapeamento de exceções de domínio -> HTTP
+    database/
+      migrations/
+    main.ts
+  Dockerfile
+  docker-compose.yml
+  .env.example
+
+frontend/
+  src/
+    modules/
+      auth/ users/ patients/ consultations/ medical-records/ rooms/
+        service/ hook/ dto/ component/ page/
+    common/
+      api/                 # client HTTP central
+      guards/               # RequireAuth, RequireRole
+      context/               # AuthContext
+      components/
+  vite.config.ts
+  .env.example
 ```
 
-## Compile and run the project
+---
+
+## Como rodar localmente
+
+### Pré-requisitos
+
+- Node.js 20+
+- PostgreSQL 15+ rodando localmente (ou via Docker apenas para o banco — ver seção seguinte)
+- npm ou yarn
+
+### Backend
 
 ```bash
-# development
-$ npm run start
+cd backend
+cp .env.example .env
+# edite o .env com as credenciais do seu Postgres local e as chaves do LiveKit
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
+npm run migration:run
+npm run start:dev
 ```
 
-## Run tests
+A API sobe em `http://localhost:3000` (ou na porta definida em `PORT` no `.env`). A documentação Swagger fica disponível em `http://localhost:3000/docs`.
+
+### Frontend
 
 ```bash
-# unit tests
-$ npm run test
+cd frontend
+cp .env.example .env
+# edite VITE_API_BASE_URL apontando para a API acima
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
+npm run dev
 ```
 
-## Deployment
+O frontend sobe em `http://localhost:5173`.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+---
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Como rodar com Docker
+
+Sobe API, banco de dados e frontend com um único comando:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+# ajuste os .env conforme necessário (principalmente as chaves do LiveKit)
+
+docker compose up --build
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Serviços:
 
-## Resources
+| Serviço    | Descrição                                | Porta padrão |
+| ---------- | ---------------------------------------- | ------------ |
+| `api`      | Backend NestJS                           | `3000`       |
+| `postgres` | Banco de dados PostgreSQL                | `5432`       |
+| `web`      | Frontend React (build servido via Nginx) | `8080`       |
 
-Check out a few resources that may come in handy when working with NestJS:
+As migrations são executadas automaticamente na subida do container `api` (via script de entrypoint).
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Para derrubar o ambiente:
 
-## Support
+```bash
+docker compose down
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Para derrubar e apagar os dados do banco (reset completo):
 
-## Stay in touch
+```bash
+docker compose down -v
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+## Variáveis de ambiente
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### Backend (`backend/.env`)
+
+| Variável                 | Descrição                                      | Exemplo                                       |
+| ------------------------ | ---------------------------------------------- | --------------------------------------------- |
+| `PORT`                   | Porta da aplicação NestJS                      | `3000`                                        |
+| `DATABASE_URL`           | String de conexão PostgreSQL                   | `postgres://user:pass@localhost:5432/bencorp` |
+| `JWT_SECRET`             | Segredo para assinatura do JWT                 | `troque-por-um-valor-forte`                   |
+| `JWT_EXPIRES_IN`         | Tempo de expiração do token de sessão          | `8h`                                          |
+| `LIVEKIT_API_KEY`        | Chave de API do LiveKit                        | `devkey`                                      |
+| `LIVEKIT_API_SECRET`     | Segredo de API do LiveKit                      | `devsecret`                                   |
+| `LIVEKIT_SERVER_URL`     | URL do servidor LiveKit (cloud ou self-hosted) | `wss://seu-projeto.livekit.cloud`             |
+| `ROOM_TOKEN_TTL_SECONDS` | TTL do token de acesso à sala                  | `900`                                         |
+
+### Frontend (`frontend/.env`)
+
+| Variável            | Descrição                            | Exemplo                 |
+| ------------------- | ------------------------------------ | ----------------------- |
+| `VITE_API_BASE_URL` | URL base da API consumida pelo front | `http://localhost:3000` |
+
+---
+
+## Documentação da API
+
+A especificação completa (OpenAPI/Swagger) fica disponível em `/docs` com a aplicação rodando. Principais grupos de endpoints:
+
+- `POST /auth/login` — autenticação e emissão de JWT.
+- `/users` — gestão de usuários (exclusivo ADMIN).
+- `/patients` — cadastro e histórico de pacientes.
+- `/consultations` — fila de atendimento, início, transferência, finalização e cancelamento.
+- `/medical-records` — prontuário, finalização e adendos.
+- `/rooms` — emissão de credenciais de acesso à sala de vídeo (profissional e paciente).
+
+---
+
+## Perfis e regras de acesso
+
+| Perfil   | Acesso                                                                        |
+| -------- | ----------------------------------------------------------------------------- |
+| `admin`  | Gestão de usuários e permissões. **Não acessa prontuário clínico.**           |
+| `nurse`  | Fila de atendimento, triagem, iniciar atendimento, encaminhar para médico.    |
+| `doctor` | Fila de atendimento, atendimentos recebidos, prescrição, prontuário completo. |
+| Paciente | Sem login. Acessa a sala por link temporário de uso único.                    |
+
+Toda autorização é validada no backend, em duas camadas:
+
+1. **Por role**, via `RolesGuard` + decorator `@Roles(...)`.
+2. **Por recurso**, dentro dos services — por exemplo, um médico só acessa o prontuário do atendimento ao qual está vinculado, não qualquer prontuário do sistema, mesmo tendo a role correta.
+
+O frontend reflete essas regras visualmente (ocultando rotas e ações), mas essa camada é apenas UX — a única fonte real de autorização é a resposta da API.
+
+---
+
+## Decisões técnicas e trade-offs
+
+### Concorrência resolvida no banco, não em memória
+
+A regra "dois cliques simultâneos em Iniciar Atendimento: um vence, o outro recebe 409" foi implementada com **UPDATE condicional atômico** (`WHERE id = :id AND status = :statusEsperado`), nunca com um `SELECT` de verificação seguido de `UPDATE`. Isso elimina a janela de corrida (TOCTOU) entre a leitura e a escrita. Reforçado por um índice único parcial no banco (`profissional_id` com `status = 'em_andamento'`), garantindo em nível de constraint que um profissional não tenha dois atendimentos simultâneos — mesmo que alguma regra de aplicação falhe.
+
+O mesmo padrão foi aplicado na criação de usuário (e-mail duplicado): a unicidade é resolvida pela constraint do banco, com o erro de violação capturado e traduzido para `409`, nunca por um `SELECT` prévio de "e-mail já existe".
+
+### Repositórios abstratos via interface + DI
+
+Nenhum service depende diretamente de `@InjectRepository`. Interfaces de repositório são injetadas por token, e a implementação concreta (TypeORM/PostgreSQL) fica isolada. Isso significa que trocar de banco de dados exigiria apenas uma nova implementação da interface, sem tocar em regra de negócio — **essa segunda implementação não foi construída**, pois PostgreSQL é o requisito técnico obrigatório do case e o tempo foi priorizado para as regras de negócio críticas (concorrência, RBAC, imutabilidade).
+
+### Autenticação: role sempre validada no banco, nunca só no payload do JWT
+
+O payload do JWT carrega apenas o identificador do usuário (`sub`). A cada requisição, a role é buscada novamente no banco (`JwtStrategy.validate`). Isso tem um custo pequeno de uma query indexada a mais por requisição, mas garante que a revogação de acesso (ex: um ADMIN desativa um profissional) tenha efeito imediato, sem esperar o token antigo expirar — decisão relevante em um sistema com dados de saúde sensíveis.
+
+### Invalidação de sala sem estado adicional (sem Redis)
+
+A invalidação de todos os tokens de sala na finalização do atendimento foi resolvida com um contador de versão (`salaVersion`) incrementado no próprio registro do atendimento, embutido no token no momento da emissão. A validação compara a versão do token com a versão atual — nenhuma blacklist ou cache externo foi necessário.
+
+### Prontuário imutável via adendo, não via versionamento completo
+
+Uma vez finalizado, o prontuário não é mais editável por nenhuma rota. Correções são registradas em uma entidade separada (adendo), com autor e timestamp próprios, sem sobrescrever o conteúdo original. Optou-se por esse modelo (mais simples) em vez de um histórico de versões completo do prontuário, por ser suficiente para atender ao requisito de auditabilidade do case dentro do prazo disponível.
+
+### Frontend: React + Vite em vez de Next.js
+
+Todas as telas do sistema são autenticadas ou de acesso via link temporário — não há ganho relevante de SSR/SEO que justificasse Next.js. Optou-se por React + Vite, com PWA configurado via `vite-plugin-pwa`, priorizando velocidade de entrega dentro do prazo do case.
+
+---
+
+## Limitações conhecidas
+
+- **Idempotency key não implementada.** O UPDATE condicional resolve corretamente a race condition entre profissionais diferentes, mas, isoladamente, pode gerar um `409` falso para o mesmo profissional em caso de retentativa após timeout de rede (ex: duplo envio por perda de resposta). A solução correta seria uma chave de idempotência por header, persistida na mesma transação da operação. Identificado, mas não implementado por restrição de tempo.
+- **Log de auditoria gravado de forma síncrona.** Para o volume e escopo do case, gravação síncrona no mesmo ciclo de request é suficiente; um ambiente de produção com maior volume se beneficiaria de uma fila assíncrona para não acoplar a latência da escrita de auditoria à resposta da API.
+- **Sem rate limiting no login.** Não implementado por restrição de tempo; seria uma camada adicional de defesa contra força bruta, recomendada para produção.
+- **Busca de pacientes por nome/CPF é filtrada no cliente.** O backend não expõe um endpoint de busca textual dedicado; a listagem paginada é consumida e filtrada no frontend. Para uma base de pacientes muito grande, isso deixaria de ser eficiente e passaria a exigir um endpoint de busca no backend.
+- **Sessão do frontend armazenada sem proteção adicional contra XSS.** Para o escopo do case, o token é mantido em memória/contexto React; em produção, a abordagem recomendada seria um cookie `httpOnly`, o que exigiria mudanças no fluxo de autenticação do backend.
+- **Sem testes de carga para a condição de corrida.** A resolução da concorrência foi validada com testes automatizados disparando requisições concorrentes em ambiente de desenvolvimento, mas não houve teste de carga em escala.
+
+---
+
+## Uso de IA no desenvolvimento
+
+IA foi utilizada como ferramenta de apoio ao longo do desenvolvimento, principalmente para:
+
+- Discussão e validação de abordagens arquiteturais (ex: resolução de race condition via UPDATE condicional vs. lock pessimista, estratégia de invalidação de token de sala sem estado adicional).
+- Geração de boilerplate repetitivo seguindo padrões já definidos manualmente (DTOs, guards, estrutura de módulos).
+- Revisão de trade-offs para as decisões documentadas neste README.
+
+Todas as decisões arquiteturais centrais (resolução de concorrência no banco, separação de responsabilidades entre módulos, modelo de invalidação de sala, estrutura de RBAC em duas camadas) foram definidas antes da geração de código, com domínio pleno sobre o funcionamento e capacidade de explicar cada escolha e seus trade-offs, conforme detalhado nas seções acima.
