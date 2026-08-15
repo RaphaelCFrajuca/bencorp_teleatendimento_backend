@@ -41,7 +41,7 @@ import { PatientsService } from '../service/patients.service';
 @Controller('patients')
 @ApiTags('Patients')
 @ApiBearerAuth()
-@Roles(Role.ADMIN, Role.NURSE, Role.DOCTOR)
+@Roles(Role.NURSE, Role.DOCTOR)
 export class PatientsController {
   constructor(
     private readonly patientsService: PatientsService,
@@ -103,6 +103,7 @@ export class PatientsController {
     required: false,
     description: 'Número máximo de registros a retornar (padrão: 50)',
   })
+  @Roles(Role.NURSE, Role.DOCTOR)
   listPatients(
     @Query('skip') skip: string = '0',
     @Query('limit') limit: string = '50',
@@ -189,11 +190,10 @@ export class PatientsController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.NURSE)
   @ApiOperation({
     summary: 'Atualiza um paciente',
-    description:
-      'Atualiza os dados de um paciente existente. Apenas administradores podem atualizar pacientes.',
+    description: 'Atualiza os dados de um paciente existente.',
   })
   @ApiOkResponse({
     description: 'Paciente atualizado com sucesso.',
@@ -228,12 +228,11 @@ export class PatientsController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.NURSE)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Desativa um paciente',
-    description:
-      'Marca um paciente como inativo (soft delete). Apenas administradores podem desativar pacientes.',
+    description: 'Marca um paciente como inativo (soft delete)',
   })
   @ApiNoContentResponse({
     description: 'Paciente desativado com sucesso.',

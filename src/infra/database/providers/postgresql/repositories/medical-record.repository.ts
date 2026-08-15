@@ -2,9 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 import type { Database } from '../../../interfaces/database.interface';
 import { MedicalRecordRepositoryInterface } from '../../../interfaces/medical-record.repository.interface';
+import {
+  MedicalRecord,
+  MedicalRecordAppendix,
+} from '../../../interfaces/medical-record.repository.interface';
 import { ConsultationEntity } from '../entities/consultation.entity';
 import { MedicalRecordAppendixEntity } from '../entities/medical-record-appendix.entity';
 import { MedicalRecordEntity } from '../entities/medical-record.entity';
+import { MedicalRecordStatus } from 'src/modules/medical-records/enum/medical-record-status.enum';
 
 @Injectable()
 export class MedicalRecordRepository implements MedicalRecordRepositoryInterface {
@@ -35,8 +40,8 @@ export class MedicalRecordRepository implements MedicalRecordRepositoryInterface
     diagnose: string;
     treatment: string;
     observations?: string;
-    status: string;
-  }): Promise<any> {
+    status: MedicalRecordStatus;
+  }): Promise<MedicalRecord> {
     const repository = await this.getRepository();
     const record = repository.create({
       consultationId: data.consultationId,
@@ -59,7 +64,7 @@ export class MedicalRecordRepository implements MedicalRecordRepositoryInterface
     return saved;
   }
 
-  async getMedicalRecordById(id: string): Promise<any | null> {
+  async getMedicalRecordById(id: string): Promise<MedicalRecord | null> {
     const repository = await this.getRepository();
     const record = await repository.findOne({
       where: { id },
@@ -73,7 +78,7 @@ export class MedicalRecordRepository implements MedicalRecordRepositoryInterface
     return record;
   }
 
-  async getMedicalRecordByConsultationId(consultationId: string): Promise<any | null> {
+  async getMedicalRecordByConsultationId(consultationId: string): Promise<MedicalRecord | null> {
     const repository = await this.getRepository();
     const record = await repository.findOne({
       where: { consultationId },
@@ -87,7 +92,7 @@ export class MedicalRecordRepository implements MedicalRecordRepositoryInterface
     return record;
   }
 
-  async getMedicalRecordsByPatient(patientId: string): Promise<any[]> {
+  async getMedicalRecordsByPatient(patientId: string): Promise<MedicalRecord[]> {
     const repository = await this.getRepository();
     const records = await repository.find({
       where: { patientId },
@@ -131,9 +136,9 @@ export class MedicalRecordRepository implements MedicalRecordRepositoryInterface
       diagnose: string;
       treatment: string;
       observations: string;
-      status: string;
+      status: MedicalRecordStatus;
     }>,
-  ): Promise<any> {
+  ): Promise<MedicalRecord> {
     const repository = await this.getRepository();
     await repository.update({ id }, data);
 
@@ -143,7 +148,7 @@ export class MedicalRecordRepository implements MedicalRecordRepositoryInterface
       medicalRecordId: id,
     });
 
-    return updated;
+    return updated as MedicalRecord;
   }
 
   async createMedicalRecordAppendix(data: {
@@ -151,7 +156,7 @@ export class MedicalRecordRepository implements MedicalRecordRepositoryInterface
     professionalId: string;
     content: string;
     reason?: string;
-  }): Promise<any> {
+  }): Promise<MedicalRecordAppendix> {
     const repository = await this.getAppendixRepository();
     const appendix = repository.create({
       medicalRecordId: data.medicalRecordId,
@@ -171,7 +176,7 @@ export class MedicalRecordRepository implements MedicalRecordRepositoryInterface
     return saved;
   }
 
-  async getMedicalRecordAppendices(medicalRecordId: string): Promise<any[]> {
+  async getMedicalRecordAppendices(medicalRecordId: string): Promise<MedicalRecordAppendix[]> {
     const repository = await this.getAppendixRepository();
     const appendices = await repository.find({
       where: { medicalRecordId },

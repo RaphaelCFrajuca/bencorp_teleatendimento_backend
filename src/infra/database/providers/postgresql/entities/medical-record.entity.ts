@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { MedicalRecordStatus } from 'src/modules/medical-records/enum/medical-record-status.enum';
 
 @Entity('medical_records')
 @Index('idx_medical_records_consultation_id', ['consultationId'])
@@ -29,7 +30,7 @@ export class MedicalRecordEntity {
     enum: ['rascunho', 'finalizado'],
     default: 'rascunho',
   })
-  status: string;
+  status: MedicalRecordStatus;
 
   @Column('text')
   diagnose: string;
