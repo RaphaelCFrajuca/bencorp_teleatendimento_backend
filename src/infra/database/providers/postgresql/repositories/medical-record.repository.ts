@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
+import { MedicalRecordStatus } from 'src/modules/medical-records/enum/medical-record-status.enum';
 import type { Database } from '../../../interfaces/database.interface';
-import { MedicalRecordRepositoryInterface } from '../../../interfaces/medical-record.repository.interface';
 import {
   MedicalRecord,
   MedicalRecordAppendix,
+  MedicalRecordRepositoryInterface,
 } from '../../../interfaces/medical-record.repository.interface';
 import { ConsultationEntity } from '../entities/consultation.entity';
 import { MedicalRecordAppendixEntity } from '../entities/medical-record-appendix.entity';
 import { MedicalRecordEntity } from '../entities/medical-record.entity';
-import { MedicalRecordStatus } from 'src/modules/medical-records/enum/medical-record-status.enum';
 
 @Injectable()
 export class MedicalRecordRepository implements MedicalRecordRepositoryInterface {
