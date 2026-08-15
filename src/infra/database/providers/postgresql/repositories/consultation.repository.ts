@@ -58,7 +58,8 @@ export class ConsultationRepository implements ConsultationRepositoryInterface {
     });
     const query = repository
       .createQueryBuilder('c')
-      .where('c.professional_id = :professionalId', { professionalId });
+      .where('c.professional_id = :professionalId', { professionalId })
+      .orWhere('c.transferred_to_id = :professionalId', { professionalId });
 
     if (status) {
       query.andWhere('c.status = :status', { status });
