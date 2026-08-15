@@ -1,0 +1,25 @@
+services:
+  bencorp-teleatendimento-backend:
+    build:
+      context: .
+    image: bencorp-teleatendimento-backend:latest
+    container_name: bencorp-teleatendimento-backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+
+      DATABASE: ${DATABASE}
+
+      POSTGRESQL_HOST: ${POSTGRESQL_HOST}
+      POSTGRESQL_PORT: ${POSTGRESQL_PORT}
+      POSTGRESQL_USER: ${POSTGRESQL_USER}
+      POSTGRESQL_PASSWORD: ${POSTGRESQL_PASSWORD}
+      POSTGRESQL_DB: ${POSTGRESQL_DB}
+
+      JWT_SECRET: ${JWT_SECRET}
+
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET}
+      LIVEKIT_URL: ${LIVEKIT_URL}
